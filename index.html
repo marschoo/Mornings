@@ -119,7 +119,7 @@
                 <!-- Live Cloud Connection Status -->
                 <div id="sync-status-indicator" class="flex items-center justify-center gap-1.5 text-[10px] text-morning-sage font-semibold uppercase tracking-wider bg-morning-sage/10 py-1.5 rounded-full">
                     <span id="sync-dot" class="w-2 h-2 rounded-full bg-morning-sage animate-ping"></span>
-                    <span id="sync-status-text">Syncing live with partner</span>
+                    <span id="sync-status-text">Connecting live...</span>
                 </div>
 
                 <!-- Hero Fact Card -->
@@ -138,7 +138,7 @@
                         <div class="py-4">
                             <i data-lucide="quote" class="w-8 h-8 text-morning-accent/10 mb-2"></i>
                             <p id="fact-text" class="font-serif text-3xl leading-relaxed text-morning-text italic pr-2">
-                                Loading our morning aura...
+                                Preparing today's aura...
                             </p>
                         </div>
                     </div>
@@ -229,7 +229,7 @@
 
                     <!-- Custom Message box to send to partner -->
                     <div id="reaction-shared-box" class="bg-morning-card border border-neutral-100 rounded-xl p-3 hidden space-y-2">
-                        <p id="reaction-text-preview" class="text-xs italic text-morning-muted">"Hey Louise! Today's morning fact..."</p>
+                        <p id="reaction-text-preview" class="text-xs italic text-morning-muted">"Hey!"</p>
                         <div class="flex justify-end gap-2">
                             <button onclick="copyPartnerText()" class="bg-morning-accent text-white text-[10px] font-semibold tracking-wider uppercase px-3 py-1.5 rounded-lg active:scale-95 transition-all flex items-center gap-1">
                                 <i data-lucide="copy" class="w-3 h-3"></i> Copy Text Message
@@ -362,7 +362,7 @@
 
     <!-- Zero-Config, Lightweight Cloud Sync Database Logic -->
     <script>
-        // Pre-seeded high-quality curious facts
+        // Pre-seeded high-quality curious facts (Vegetarian/safe list)
         const FACTS = [
             { id: 1, category: "Space", text: "Neutron stars are so incredibly dense that a single teaspoon of their matter would weigh approximately 6 billion tons on Earth." },
             { id: 2, category: "Ocean Life", text: "The giant Pacific octopus has three hearts, nine brains, and beautiful blue blood." },
@@ -429,15 +429,15 @@
             louiseReaction: ''
         };
 
-        // Anonymous shared cloud sync endpoint (Using an open KVDB database custom endpoint)
-        const SYNC_DB_URL = "https://kvdb.io/marvin_louise_aura_secure_bucket_99182/status_";
+        // Fully open, self-hosted cloud sync API
+        const SYNC_DB_URL = "https://kvdb.io/marvin_louise_aura_v5/status_";
 
         function getTodayDateString() {
             const d = new Date();
             return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
         }
 
-        // Fetch updates from public KVDB storage bucket
+        // Fetch updates with error protection
         async function fetchCloudState() {
             const todayStr = getTodayDateString();
             const indicatorText = document.getElementById('sync-status-text');
@@ -457,20 +457,19 @@
                     updateReactionUI();
                     updatePresenceDashboard();
                     
-                    indicatorText.innerText = "Syncing live with partner";
+                    indicatorText.innerText = "Synced live with partner";
                     dot.className = "w-2 h-2 rounded-full bg-morning-sage animate-ping";
-                } else if (response.status === 404) {
-                    // Database key is empty for today, create initial key
-                    indicatorText.innerText = "Synced (New Day started)";
+                } else {
+                    indicatorText.innerText = "Waiting for partner log";
+                    dot.className = "w-2 h-2 rounded-full bg-morning-accent";
                 }
             } catch (err) {
-                console.warn("Cloud connection sleeping: ", err);
-                indicatorText.innerText = "Working offline mode";
+                indicatorText.innerText = "Offline Mode";
                 dot.className = "w-2 h-2 rounded-full bg-amber-400";
             }
         }
 
-        // Write updates to the public KVDB storage bucket
+        // Write updates safely to public database
         async function saveCloudState() {
             const todayStr = getTodayDateString();
             const payload = {
@@ -487,11 +486,11 @@
                 });
                 updatePresenceDashboard();
             } catch (err) {
-                console.error("Cloud status update failed: ", err);
+                console.warn("Could not save to database right now.", err);
             }
         }
 
-        // Setup Fact based on local math
+        // Setup Fact based on local mathematical seed
         function setupTodayFact() {
             const todayStr = getTodayDateString();
             
@@ -538,7 +537,7 @@
         }
 
         function loadLocalIdentity() {
-            const savedIdentity = localStorage.getItem('mornings_aura_identity_v4');
+            const savedIdentity = localStorage.getItem('mornings_aura_identity_v5');
             if (savedIdentity) {
                 appState.userName = savedIdentity;
                 appState.partnerName = savedIdentity === 'Marvin' ? 'Louise' : 'Marvin';
@@ -549,7 +548,7 @@
         }
 
         function saveLocalIdentity(name) {
-            localStorage.setItem('mornings_aura_identity_v4', name);
+            localStorage.setItem('mornings_aura_identity_v5', name);
         }
 
         function setupUI() {
@@ -589,7 +588,6 @@
 
             updateReactionUI();
             
-            // Text share card setup
             appState.selectedReaction = mood;
             const reactionBox = document.getElementById('reaction-shared-box');
             const preview = document.getElementById('reaction-text-preview');
@@ -625,7 +623,6 @@
         }
 
         function updatePresenceDashboard() {
-            // Marvin Dashboard Update
             const marvinBadge = document.getElementById('presence-marvin-badge');
             const marvinText = document.getElementById('presence-marvin-text');
             const marvinReactDisplay = document.getElementById('presence-marvin-reaction');
@@ -640,7 +637,6 @@
                 marvinReactDisplay.innerText = '';
             }
 
-            // Louise Dashboard Update
             const louiseBadge = document.getElementById('presence-louise-badge');
             const louiseText = document.getElementById('presence-louise-text');
             const louiseReactDisplay = document.getElementById('presence-louise-reaction');
@@ -858,58 +854,6 @@
             }
         }
 
-        // Service Worker registration with cache buster 'mornings-aura-v4'
-        function registerDynamicServiceWorker() {
-            if ('serviceWorker' in navigator) {
-                const swCode = `
-                    const CACHE_NAME = 'mornings-aura-v4';
-                    const urlsToCache = [
-                        '/',
-                        'https://cdn.tailwindcss.com',
-                        'https://unpkg.com/lucide@latest',
-                        'https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap'
-                    ];
-
-                    self.addEventListener('install', event => {
-                        self.skipWaiting();
-                        event.waitUntil(
-                            caches.open(CACHE_NAME).then(cache => {
-                                return cache.addAll(urlsToCache);
-                            })
-                        );
-                    });
-
-                    self.addEventListener('activate', event => {
-                        event.waitUntil(
-                            caches.keys().then(cacheNames => {
-                                return Promise.all(
-                                    cacheNames.map(cache => {
-                                        if (cache !== CACHE_NAME) {
-                                            return caches.delete(cache);
-                                        }
-                                    })
-                                );
-                            }).then(() => self.clients.claim())
-                        );
-                    });
-
-                    self.addEventListener('fetch', event => {
-                        event.respondWith(
-                            caches.match(event.request).then(response => {
-                                return response || fetch(event.request);
-                            })
-                        );
-                    });
-                `;
-                const blob = new Blob([swCode], { type: 'application/javascript' });
-                const swUrl = URL.createObjectURL(blob);
-                navigator.serviceWorker.register(swUrl).then(registration => {
-                    // Check for updates automatically on load
-                    registration.update();
-                }).catch(err => console.warn(err));
-            }
-        }
-
         function checkPwaStatus() {
             const isStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
             const badge = document.getElementById('pwa-status-badge');
@@ -957,8 +901,6 @@
         window.showTab = showTab;
         window.forceShowPwaInstallPrompt = forceShowPwaInstallPrompt;
         window.dismissInstallPrompt = dismissInstallPrompt;
-
-        registerDynamicServiceWorker();
     </script>
 </body>
 </html>
