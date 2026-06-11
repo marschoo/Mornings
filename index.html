@@ -118,8 +118,8 @@
                 
                 <!-- Live Cloud Connection Status -->
                 <div id="sync-status-indicator" class="flex items-center justify-center gap-1.5 text-[10px] text-morning-sage font-semibold uppercase tracking-wider bg-morning-sage/10 py-1.5 rounded-full">
-                    <span class="w-2 h-2 rounded-full bg-morning-sage animate-ping"></span>
-                    Syncing live with your partner
+                    <span id="sync-dot" class="w-2 h-2 rounded-full bg-morning-sage animate-ping"></span>
+                    <span id="sync-status-text">Syncing live with partner</span>
                 </div>
 
                 <!-- Hero Fact Card -->
@@ -153,10 +153,15 @@
                             <span id="read-text">Mark Read</span>
                         </button>
 
-                        <!-- Share Action -->
-                        <button onclick="shareTodayFact()" class="p-2.5 rounded-full hover:bg-neutral-50 active:scale-95 transition-all text-morning-muted">
-                            <i data-lucide="share" class="w-5 h-5"></i>
-                        </button>
+                        <!-- Actions -->
+                        <div class="flex items-center gap-1">
+                            <button onclick="forceSync()" class="p-2.5 rounded-full hover:bg-neutral-50 active:scale-95 transition-all text-morning-muted mr-1" title="Force Sync">
+                                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="shareTodayFact()" class="p-2.5 rounded-full hover:bg-neutral-50 active:scale-95 transition-all text-morning-muted">
+                                <i data-lucide="share" class="w-5 h-5"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -297,7 +302,7 @@
                     </div>
 
                     <div class="p-3 bg-neutral-50 rounded-xl border border-neutral-100 text-xs text-morning-muted leading-relaxed">
-                        Setting your identity lets the app correctly label who has read today's fact, saved a fact, or reacted. This updates instantly on your partner's screen!
+                        Setting your identity lets the app correctly label who has read today's fact and syncs it automatically to Louise or Marvin's screen!
                     </div>
                 </div>
 
@@ -355,13 +360,9 @@
         </nav>
     </div>
 
-    <!-- Firebase Real-Time Synchronization Modules -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Pre-seeded facts (strictly vegetarian / nature / space safe)
+    <!-- Zero-Config, Lightweight Cloud Sync Database Logic -->
+    <script>
+        // Pre-seeded high-quality curious facts
         const FACTS = [
             { id: 1, category: "Space", text: "Neutron stars are so incredibly dense that a single teaspoon of their matter would weigh approximately 6 billion tons on Earth." },
             { id: 2, category: "Ocean Life", text: "The giant Pacific octopus has three hearts, nine brains, and beautiful blue blood." },
@@ -419,8 +420,8 @@
         let appState = {
             streak: 1,
             lastOpenedDateStr: '',
-            userName: 'Marvin',   // Set default identity as Marvin locally
-            partnerName: 'Louise', // Set partner name as Louise
+            userName: 'Marvin',
+            partnerName: 'Louise',
             currentFact: null,
             todayReadMarvin: false,
             todayReadLouise: false,
@@ -428,84 +429,69 @@
             louiseReaction: ''
         };
 
-        // Initialize Firebase
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'mornings-aura-marvin-louise';
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // Core execution sequence
-        const init = async () => {
-            // Priority Auth flow
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                await signInWithCustomToken(auth, __initial_auth_token);
-            } else {
-                await signInAnonymously(auth);
-            }
-
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    loadLocalIdentity();
-                    setupTodayFact();
-                    setupFirebaseListeners(user);
-                    setupUI();
-                    checkPwaStatus();
-                }
-            });
-        };
-
-        // Loads local choice of who is holding this physical device
-        function loadLocalIdentity() {
-            const savedIdentity = localStorage.getItem('mornings_aura_identity_v3');
-            if (savedIdentity) {
-                appState.userName = savedIdentity;
-                appState.partnerName = savedIdentity === 'Marvin' ? 'Louise' : 'Marvin';
-            } else {
-                appState.userName = 'Marvin';
-                appState.partnerName = 'Louise';
-            }
-        }
-
-        function saveLocalIdentity(name) {
-            localStorage.setItem('mornings_aura_identity_v3', name);
-        }
+        // Anonymous shared cloud sync endpoint (Using an open KVDB database custom endpoint)
+        const SYNC_DB_URL = "https://kvdb.io/marvin_louise_aura_secure_bucket_99182/status_";
 
         function getTodayDateString() {
             const d = new Date();
             return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
         }
 
-        // Real-Time Cloud Listeners (RULE 1 & RULE 2 compliant)
-        function setupFirebaseListeners(user) {
-            if (!user) return;
-
-            // Syncing Today's Interactive state in real-time
+        // Fetch updates from public KVDB storage bucket
+        async function fetchCloudState() {
             const todayStr = getTodayDateString();
-            const statusDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'daily_status', todayStr);
-            
-            onSnapshot(statusDocRef, (docSnap) => {
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
+            const indicatorText = document.getElementById('sync-status-text');
+            const dot = document.getElementById('sync-dot');
+
+            try {
+                const response = await fetch(SYNC_DB_URL + todayStr);
+                if (response.status === 200) {
+                    const data = await response.json();
+                    
                     appState.todayReadMarvin = data.marvinRead || false;
                     appState.todayReadLouise = data.louiseRead || false;
                     appState.marvinReaction = data.marvinReaction || '';
                     appState.louiseReaction = data.louiseReaction || '';
-                } else {
-                    appState.todayReadMarvin = false;
-                    appState.todayReadLouise = false;
-                    appState.marvinReaction = '';
-                    appState.louiseReaction = '';
+
+                    updateReadButtonUI();
+                    updateReactionUI();
+                    updatePresenceDashboard();
+                    
+                    indicatorText.innerText = "Syncing live with partner";
+                    dot.className = "w-2 h-2 rounded-full bg-morning-sage animate-ping";
+                } else if (response.status === 404) {
+                    // Database key is empty for today, create initial key
+                    indicatorText.innerText = "Synced (New Day started)";
                 }
-                updateReadButtonUI();
-                updateReactionUI();
-                updatePresenceDashboard();
-            }, (error) => {
-                console.error("Daily status database error: ", error);
-            });
+            } catch (err) {
+                console.warn("Cloud connection sleeping: ", err);
+                indicatorText.innerText = "Working offline mode";
+                dot.className = "w-2 h-2 rounded-full bg-amber-400";
+            }
         }
 
-        // Setup Fact based on local deterministic math
+        // Write updates to the public KVDB storage bucket
+        async function saveCloudState() {
+            const todayStr = getTodayDateString();
+            const payload = {
+                marvinRead: appState.todayReadMarvin,
+                louiseRead: appState.todayReadLouise,
+                marvinReaction: appState.marvinReaction,
+                louiseReaction: appState.louiseReaction
+            };
+
+            try {
+                await fetch(SYNC_DB_URL + todayStr, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                updatePresenceDashboard();
+            } catch (err) {
+                console.error("Cloud status update failed: ", err);
+            }
+        }
+
+        // Setup Fact based on local math
         function setupTodayFact() {
             const todayStr = getTodayDateString();
             
@@ -551,6 +537,21 @@
             document.getElementById('streak-count').innerText = appState.streak;
         }
 
+        function loadLocalIdentity() {
+            const savedIdentity = localStorage.getItem('mornings_aura_identity_v4');
+            if (savedIdentity) {
+                appState.userName = savedIdentity;
+                appState.partnerName = savedIdentity === 'Marvin' ? 'Louise' : 'Marvin';
+            } else {
+                appState.userName = 'Marvin';
+                appState.partnerName = 'Louise';
+            }
+        }
+
+        function saveLocalIdentity(name) {
+            localStorage.setItem('mornings_aura_identity_v4', name);
+        }
+
         function setupUI() {
             document.getElementById('setting-user-selector').value = appState.userName;
             document.getElementById('header-greeting').innerText = `Good Morning, ${appState.userName}`;
@@ -563,53 +564,43 @@
             }
         }
 
-        // Toggle Daily Read state and upload directly to shared Daily Status Doc
+        // Toggle daily read states
         async function toggleReadToday() {
-            const todayStr = getTodayDateString();
-            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'daily_status', todayStr);
-            
             const amIMarvin = appState.userName === 'Marvin';
-            const currentReadState = amIMarvin ? appState.todayReadMarvin : appState.todayReadLouise;
-            const newReadState = !currentReadState;
-
-            const payload = {};
             if (amIMarvin) {
-                payload.marvinRead = newReadState;
+                appState.todayReadMarvin = !appState.todayReadMarvin;
             } else {
-                payload.louiseRead = newReadState;
+                appState.todayReadLouise = !appState.todayReadLouise;
             }
 
-            await setDoc(docRef, payload, { merge: true });
-            showToast(newReadState ? "Marked as read! ✨" : "Marked as unread");
+            updateReadButtonUI();
+            showToast( (amIMarvin ? appState.todayReadMarvin : appState.todayReadLouise) ? "Marked as read! ✨" : "Marked as unread");
+            await saveCloudState();
         }
 
-        // Select Daily Reaction emoji & sync to partner
+        // Log partner reaction status
         async function selectReaction(mood) {
-            const todayStr = getTodayDateString();
-            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'daily_status', todayStr);
-            
             const amIMarvin = appState.userName === 'Marvin';
-            const payload = {};
-
             if (amIMarvin) {
-                payload.marvinReaction = mood;
+                appState.marvinReaction = mood;
             } else {
-                payload.louiseReaction = mood;
+                appState.louiseReaction = mood;
             }
 
-            await setDoc(docRef, payload, { merge: true });
+            updateReactionUI();
             
-            // Build text copy panel if they still want to copy message
+            // Text share card setup
             appState.selectedReaction = mood;
             const reactionBox = document.getElementById('reaction-shared-box');
             const preview = document.getElementById('reaction-text-preview');
             const partnerName = amIMarvin ? 'Louise' : 'Marvin';
             
-            preview.innerText = `🌅 Good morning ${partnerName}! Just read today's Morning Aura trivia: "${appState.currentFact.text}" \n\nMy reaction: ${mood} - Love, ${appState.userName} ❤️`;
+            preview.innerText = `🌅 Good morning ${partnerName}! Just read today's Morning Aura: "${appState.currentFact.text}" \n\nMy reaction: ${mood} - Love, ${appState.userName} ❤️`;
             reactionBox.classList.remove('hidden');
+
+            await saveCloudState();
         }
 
-        // Update Read Button indicators
         function updateReadButtonUI() {
             const amIMarvin = appState.userName === 'Marvin';
             const myReadState = amIMarvin ? appState.todayReadMarvin : appState.todayReadLouise;
@@ -633,7 +624,6 @@
             }
         }
 
-        // Update real-time partner dashboard box
         function updatePresenceDashboard() {
             // Marvin Dashboard Update
             const marvinBadge = document.getElementById('presence-marvin-badge');
@@ -666,7 +656,6 @@
             }
         }
 
-        // Update Reaction UI grid selector highlights
         function updateReactionUI() {
             const myReaction = appState.userName === 'Marvin' ? appState.marvinReaction : appState.louiseReaction;
             document.querySelectorAll('.reaction-btn').forEach(btn => {
@@ -678,7 +667,6 @@
             });
         }
 
-        // Swap local device identity
         function swapUserIdentity() {
             const selected = document.getElementById('setting-user-selector').value;
             appState.userName = selected;
@@ -694,7 +682,6 @@
             showToast(`Switched device profile to ${selected}!`);
         }
 
-        // Render past 30 days of deterministic facts in history
         function renderHistoryTab() {
             const container = document.getElementById('history-container');
             container.innerHTML = '';
@@ -735,8 +722,58 @@
             lucide.createIcons();
         }
 
-        function updateStreakDashboard() {
-            document.getElementById('streak-stat-current').innerText = `${appState.streak} ${appState.streak === 1 ? 'Day' : 'Days'}`;
+        async function forceSync() {
+            showToast("Syncing fresh data...");
+            await fetchCloudState();
+        }
+
+        // Main initial setup trigger
+        window.addEventListener('DOMContentLoaded', () => {
+            initPwaManifest();
+            loadLocalIdentity();
+            setupTodayFact();
+            setupUI();
+            checkPwaStatus();
+            lucide.createIcons();
+
+            // Run initial sync fetch
+            fetchCloudState();
+
+            // Setup background polling loop to sync with partner every 5 seconds
+            setInterval(fetchCloudState, 5000);
+        });
+
+        // Setup dynamic manifest inside headers
+        function initPwaManifest() {
+            const manifestObj = {
+                "name": "Mornings Aura",
+                "short_name": "Mornings",
+                "start_url": ".",
+                "display": "standalone",
+                "background_color": "#FBF9F6",
+                "theme_color": "#FAF6F0",
+                "description": "Shared daily morning facts for Marvin and Louise.",
+                "icons": [
+                    {
+                        "src": "https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=180&q=80",
+                        "sizes": "180x180",
+                        "type": "image/png",
+                        "purpose": "any"
+                    },
+                    {
+                        "src": "https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=192&q=80",
+                        "sizes": "192x192",
+                        "type": "image/png"
+                    },
+                    {
+                        "src": "https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=512&q=80",
+                        "sizes": "512x512",
+                        "type": "image/png"
+                    }
+                ]
+            };
+            const base64Manifest = "data:application/json;base64," + btoa(JSON.stringify(manifestObj));
+            document.getElementById('pwa-manifest').setAttribute('href', base64Manifest);
         }
 
         // Bridge helper functions to window for global inline clicks
@@ -751,6 +788,7 @@
         window.toggleReadToday = toggleReadToday;
         window.selectReaction = selectReaction;
         window.swapUserIdentity = swapUserIdentity;
+        window.forceSync = forceSync;
         
         window.shareTodayFact = () => {
             const shareText = `🌅 Today's Morning Aura Fact: "${appState.currentFact.text}" (Shared via Mornings PWA)`;
@@ -777,9 +815,6 @@
             copyToClipboard(previewText);
             showToast("Copied! Paste directly to your partner 💬");
         };
-
-        // Initialize script logic
-        init();
     </script>
 
     <!-- General Application Helper Utilities -->
@@ -823,10 +858,11 @@
             }
         }
 
+        // Service Worker registration with cache buster 'mornings-aura-v4'
         function registerDynamicServiceWorker() {
             if ('serviceWorker' in navigator) {
                 const swCode = `
-                    const CACHE_NAME = 'mornings-aura-v1';
+                    const CACHE_NAME = 'mornings-aura-v4';
                     const urlsToCache = [
                         '/',
                         'https://cdn.tailwindcss.com',
@@ -835,10 +871,25 @@
                     ];
 
                     self.addEventListener('install', event => {
+                        self.skipWaiting();
                         event.waitUntil(
                             caches.open(CACHE_NAME).then(cache => {
                                 return cache.addAll(urlsToCache);
                             })
+                        );
+                    });
+
+                    self.addEventListener('activate', event => {
+                        event.waitUntil(
+                            caches.keys().then(cacheNames => {
+                                return Promise.all(
+                                    cacheNames.map(cache => {
+                                        if (cache !== CACHE_NAME) {
+                                            return caches.delete(cache);
+                                        }
+                                    })
+                                );
+                            }).then(() => self.clients.claim())
                         );
                     });
 
@@ -852,7 +903,10 @@
                 `;
                 const blob = new Blob([swCode], { type: 'application/javascript' });
                 const swUrl = URL.createObjectURL(blob);
-                navigator.serviceWorker.register(swUrl).catch(err => console.warn(err));
+                navigator.serviceWorker.register(swUrl).then(registration => {
+                    // Check for updates automatically on load
+                    registration.update();
+                }).catch(err => console.warn(err));
             }
         }
 
