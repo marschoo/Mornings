@@ -11,7 +11,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Mornings">
     
-    <!-- PWA Icons (Dynamic Fallbacks) -->
+    <!-- PWA Icons -->
     <link rel="apple-touch-icon" href="https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=180&q=80">
     <link rel="icon" type="image/png" href="https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=32&q=80">
     
@@ -123,7 +123,7 @@
                 </div>
 
                 <!-- Hero Fact Card -->
-                <div class="bg-morning-card border border-neutral-100 rounded-3xl p-6 shadow-[0_4px_24px_rgba(44,37,35,0.03)] flex flex-col min-h-[340px] justify-between relative overflow-hidden transition-all duration-300">
+                <div class="bg-morning-card border border-neutral-100 rounded-3xl p-6 shadow-[0_4px_24px_rgba(44,37,35,0.03)] flex flex-col min-h-[320px] justify-between relative overflow-hidden transition-all duration-300">
                     <div class="space-y-4">
                         <div class="flex justify-between items-center">
                             <span id="fact-category" class="bg-morning-accentLight text-morning-accent text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
@@ -153,22 +153,14 @@
                             <span id="read-text">Mark Read</span>
                         </button>
 
-                        <!-- Share & Favorite Actions -->
-                        <div class="flex items-center gap-1">
-                            <div class="flex flex-col items-end mr-1">
-                                <span id="fav-by-text" class="text-[9px] text-morning-accent font-semibold tracking-wide"></span>
-                            </div>
-                            <button id="btn-fav" onclick="toggleFavoriteToday()" class="p-2.5 rounded-full hover:bg-neutral-50 active:scale-95 transition-all text-morning-muted flex items-center justify-center">
-                                <i id="fav-icon" data-lucide="heart" class="w-5 h-5"></i>
-                            </button>
-                            <button onclick="shareTodayFact()" class="p-2.5 rounded-full hover:bg-neutral-50 active:scale-95 transition-all text-morning-muted">
-                                <i data-lucide="share" class="w-5 h-5"></i>
-                            </button>
-                        </div>
+                        <!-- Share Action -->
+                        <button onclick="shareTodayFact()" class="p-2.5 rounded-full hover:bg-neutral-50 active:scale-95 transition-all text-morning-muted">
+                            <i data-lucide="share" class="w-5 h-5"></i>
+                        </button>
                     </div>
                 </div>
 
-                <!-- Real-time Partner Presence Dashboard (Fabulous Sync View) -->
+                <!-- Real-time Partner Presence Dashboard -->
                 <div class="bg-morning-card border border-neutral-100 rounded-2xl p-4 shadow-sm space-y-3">
                     <h4 class="text-xs font-bold uppercase tracking-wider text-morning-muted flex items-center gap-1.5">
                         <i data-lucide="users" class="w-3.5 h-3.5 text-morning-accent"></i>
@@ -254,18 +246,6 @@
                 </div>
             </section>
 
-            <!-- TAB: FAVORITES -->
-            <section id="tab-favorites" class="tab-content hidden space-y-4">
-                <div class="flex justify-between items-center mb-2">
-                    <h3 class="font-serif text-3xl text-morning-text italic">Saved Auras</h3>
-                    <span id="favorites-count-badge" class="text-xs bg-morning-accentLight text-morning-accent px-2 py-1 rounded-full font-bold">0 Saved</span>
-                </div>
-
-                <div id="favorites-container" class="space-y-3">
-                    <!-- Loaded dynamically via JS -->
-                </div>
-            </section>
-
             <!-- TAB: STREAKS & PROGRESS -->
             <section id="tab-streak" class="tab-content hidden space-y-6">
                 <div class="text-center py-6 space-y-3">
@@ -283,8 +263,8 @@
                         <p id="streak-stat-current" class="text-3xl font-extrabold text-morning-accent">1 Day</p>
                     </div>
                     <div class="space-y-1 border-l border-neutral-100">
-                        <span class="text-xs uppercase tracking-wider text-morning-muted">Total Saved</span>
-                        <p id="streak-stat-total" class="text-3xl font-extrabold text-morning-sage">0 Facts</p>
+                        <span class="text-xs uppercase tracking-wider text-morning-muted">Status</span>
+                        <p id="streak-stat-status" class="text-lg font-bold text-morning-sage py-1.5">Connected ✨</p>
                     </div>
                 </div>
 
@@ -368,10 +348,6 @@
                 <i data-lucide="book-open" class="w-5 h-5 mb-1"></i>
                 <span class="text-[10px] font-semibold">Library</span>
             </button>
-            <button id="nav-favorites" onclick="showTab('favorites')" class="flex flex-col items-center justify-center p-2 text-morning-muted hover:text-morning-accent transition-colors">
-                <i data-lucide="bookmark" class="w-5 h-5 mb-1"></i>
-                <span class="text-[10px] font-semibold">Saved</span>
-            </button>
             <button id="nav-streak" onclick="showTab('streak')" class="flex flex-col items-center justify-center p-2 text-morning-muted hover:text-morning-accent transition-colors">
                 <i data-lucide="calendar-heart" class="w-5 h-5 mb-1"></i>
                 <span class="text-[10px] font-semibold">Bonding</span>
@@ -383,9 +359,9 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Pre-seeded safe, interesting facts
+        // Pre-seeded facts (strictly vegetarian / nature / space safe)
         const FACTS = [
             { id: 1, category: "Space", text: "Neutron stars are so incredibly dense that a single teaspoon of their matter would weigh approximately 6 billion tons on Earth." },
             { id: 2, category: "Ocean Life", text: "The giant Pacific octopus has three hearts, nine brains, and beautiful blue blood." },
@@ -436,24 +412,13 @@
             { id: 47, category: "History", text: "The first novel ever written is widely considered to be 'The Tale of Genji', composed by a Japanese noblewoman named Murasaki Shikibu in 1008 CE." },
             { id: 48, category: "Space", text: "An astronaut's height can increase by up to two inches while living in space due to the decompression and relaxation of the spine in zero gravity." },
             { id: 49, category: "Botany", text: "Apples, pears, cherries, and peaches all belong to the Rosaceae family, making them close botanical cousins of the rose flower." },
-            { id: 50, category: "Nature", text: "The majestic monarch butterfly travels up to 3,000 miles during its annual migration, guided entirely by an internal solar compass." },
-            { id: 51, category: "Science", text: "The earth's core contains enough gold to completely cover the entire surface of our planet in a shimmering layer 1.5 feet deep." },
-            { id: 52, category: "Animal Behavior", text: "Cats make a distinct chattering sound when watching birds, which researchers believe is an instinctual expression of excitement or mimicked prey sounds." },
-            { id: 53, category: "History", text: "The original yellow color of post-it notes was an accidental discovery. The lab next door to the creator had scrap yellow paper they used for tests." },
-            { id: 54, category: "Meteorology", text: "A bolt of lightning is extremely hot, reaching temperatures of about 50,000 degrees Fahrenheit—five times hotter than the surface of the sun." },
-            { id: 55, category: "Astronomy", text: "Saturn's rings are not solid bands; they are composed of billions of individual ice particles, rocky debris, and cosmic dust." },
-            { id: 56, category: "Ocean Life", text: "Seashores are lined with sand, but much of the white sand in tropical areas is actually produced by parrotfish grazing on coral reefs." },
-            { id: 57, category: "Science", text: "The human eye is so sensitive that if the Earth were completely flat, you could spot a single candle flame flickering 30 miles away in absolute dark." },
-            { id: 58, category: "History", text: "The ancient Greeks had a word, 'meraki', which means doing something with total love, soul, and creativity, leaving a piece of yourself in your work." },
-            { id: 59, category: "Nature", text: "A group of flamingos is officially called a 'flamboyance', matching their bright pink feathers and social, synchronized dancing." },
-            { id: 60, category: "Space", text: "Voyager 1, launched in 1977, has officially entered interstellar space and is currently the farthest human-made object from Earth." }
+            { id: 50, category: "Nature", text: "The majestic monarch butterfly travels up to 3,000 miles during its annual migration, guided entirely by an internal solar compass." }
         ];
 
         // Core App State
         let appState = {
             streak: 1,
             lastOpenedDateStr: '',
-            favorites: [],
             userName: 'Marvin',   // Set default identity as Marvin locally
             partnerName: 'Louise', // Set partner name as Louise
             currentFact: null,
@@ -492,7 +457,7 @@
 
         // Loads local choice of who is holding this physical device
         function loadLocalIdentity() {
-            const savedIdentity = localStorage.getItem('mornings_aura_identity');
+            const savedIdentity = localStorage.getItem('mornings_aura_identity_v3');
             if (savedIdentity) {
                 appState.userName = savedIdentity;
                 appState.partnerName = savedIdentity === 'Marvin' ? 'Louise' : 'Marvin';
@@ -503,7 +468,7 @@
         }
 
         function saveLocalIdentity(name) {
-            localStorage.setItem('mornings_aura_identity', name);
+            localStorage.setItem('mornings_aura_identity_v3', name);
         }
 
         function getTodayDateString() {
@@ -515,21 +480,7 @@
         function setupFirebaseListeners(user) {
             if (!user) return;
 
-            // 1. Syncing Favorites collection in real-time
-            const favColRef = collection(db, 'artifacts', appId, 'public', 'data', 'favorites');
-            onSnapshot(favColRef, (snapshot) => {
-                appState.favorites = [];
-                snapshot.forEach(docSnap => {
-                    appState.favorites.push({ docId: docSnap.id, ...docSnap.data() });
-                });
-                renderFavoritesTab();
-                updateFavoriteButtonUI();
-                updateStreakDashboard();
-            }, (error) => {
-                console.error("Favorites database error: ", error);
-            });
-
-            // 2. Syncing Today's Interactive state in real-time
+            // Syncing Today's Interactive state in real-time
             const todayStr = getTodayDateString();
             const statusDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'daily_status', todayStr);
             
@@ -554,7 +505,7 @@
             });
         }
 
-        // Setup Fact based on local math
+        // Setup Fact based on local deterministic math
         function setupTodayFact() {
             const todayStr = getTodayDateString();
             
@@ -609,45 +560,6 @@
             const splashDismissedToday = localStorage.getItem('mornings_splash_dismissed_date');
             if (splashDismissedToday === getTodayDateString()) {
                 document.getElementById('splash-screen').classList.add('hidden');
-            }
-        }
-
-        // Toggle Favorite & write directly to Firebase with collaborative tagging
-        async function toggleFavoriteToday() {
-            const myName = appState.userName; // 'Marvin' or 'Louise'
-            const favDocId = `fact_${appState.currentFact.id}`;
-            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'favorites', favDocId);
-            
-            const currentFav = appState.favorites.find(f => f.id === appState.currentFact.id);
-
-            if (currentFav) {
-                let savedBy = currentFav.savedBy || [];
-                if (savedBy.includes(myName)) {
-                    // Remove current user
-                    savedBy = savedBy.filter(name => name !== myName);
-                    if (savedBy.length === 0) {
-                        await deleteDoc(docRef);
-                        showToast("Removed from saved library");
-                    } else {
-                        await setDoc(docRef, { savedBy }, { merge: true });
-                        showToast("Removed your save");
-                    }
-                } else {
-                    // Add current user to existing array
-                    savedBy.push(myName);
-                    await setDoc(docRef, { savedBy }, { merge: true });
-                    showToast("You also loved this! ❤️");
-                }
-            } else {
-                // Completely new save
-                await setDoc(docRef, {
-                    id: appState.currentFact.id,
-                    category: appState.currentFact.category,
-                    text: appState.currentFact.text,
-                    savedBy: [myName],
-                    savedAt: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-                });
-                showToast("Saved to our library ❤️");
             }
         }
 
@@ -721,40 +633,7 @@
             }
         }
 
-        // Update Active Favorite Button UI State & show cooperative subtexts
-        function updateFavoriteButtonUI() {
-            const icon = document.getElementById('fav-icon');
-            const statusLabel = document.getElementById('fav-by-text');
-            const myName = appState.userName;
-            const partnerName = appState.partnerName;
-
-            const currentFav = appState.favorites.find(f => f.id === appState.currentFact.id);
-
-            if (currentFav) {
-                const savedBy = currentFav.savedBy || [];
-                const iSaved = savedBy.includes(myName);
-                const partnerSaved = savedBy.includes(partnerName);
-
-                if (iSaved && partnerSaved) {
-                    icon.className = "w-5 h-5 text-morning-accent fill-current";
-                    statusLabel.innerText = "Loved by Both ❤️";
-                    statusLabel.className = "text-[9px] text-morning-accent font-bold tracking-wide";
-                } else if (iSaved) {
-                    icon.className = "w-5 h-5 text-morning-accent fill-current";
-                    statusLabel.innerText = "Loved by You";
-                    statusLabel.className = "text-[9px] text-morning-muted font-medium tracking-wide";
-                } else if (partnerSaved) {
-                    icon.className = "w-5 h-5 text-morning-muted";
-                    statusLabel.innerText = `${partnerName} Loved This ✨`;
-                    statusLabel.className = "text-[9px] text-morning-accent font-bold tracking-wide animate-pulse";
-                }
-            } else {
-                icon.className = "w-5 h-5 text-morning-muted";
-                statusLabel.innerText = "";
-            }
-        }
-
-        // Update real-time partner box
+        // Update real-time partner dashboard box
         function updatePresenceDashboard() {
             // Marvin Dashboard Update
             const marvinBadge = document.getElementById('presence-marvin-badge');
@@ -811,8 +690,6 @@
             updateReadButtonUI();
             updateReactionUI();
             updatePresenceDashboard();
-            updateFavoriteButtonUI();
-            renderFavoritesTab();
             
             showToast(`Switched device profile to ${selected}!`);
         }
@@ -858,84 +735,8 @@
             lucide.createIcons();
         }
 
-        // Render saved/favorites tab from Real-time cloud state with lovely shared ownership badges
-        function renderFavoritesTab() {
-            const container = document.getElementById('favorites-container');
-            const badge = document.getElementById('favorites-count-badge');
-            container.innerHTML = '';
-
-            const favList = appState.favorites || [];
-            badge.innerText = `${favList.length} Saved`;
-
-            if (favList.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-12 space-y-2">
-                        <div class="text-3xl">🤍</div>
-                        <p class="text-sm font-medium text-morning-muted">No saved facts yet.</p>
-                        <p class="text-xs text-neutral-400 max-w-xs mx-auto">Tap the heart on today's fact card to save it here forever.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            favList.forEach(fav => {
-                const savedBy = fav.savedBy || [];
-                const bothSaved = savedBy.includes('Marvin') && savedBy.includes('Louise');
-                
-                let ownerBadgeHtml = '';
-                if (bothSaved) {
-                    ownerBadgeHtml = `<span class="bg-morning-accent/15 text-morning-accent text-[9px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">Marvin + Louise ❤️</span>`;
-                } else if (savedBy.includes('Marvin')) {
-                    ownerBadgeHtml = `<span class="bg-neutral-100 text-morning-muted text-[9px] font-bold px-2 py-0.5 rounded-full">Marvin ☕</span>`;
-                } else if (savedBy.includes('Louise')) {
-                    ownerBadgeHtml = `<span class="bg-neutral-100 text-morning-muted text-[9px] font-bold px-2 py-0.5 rounded-full">Louise 🥐</span>`;
-                }
-
-                const item = document.createElement('div');
-                item.className = 'bg-morning-card border border-neutral-100 rounded-2xl p-5 shadow-[0_2px_12px_rgba(44,37,35,0.01)] flex flex-col space-y-3';
-                item.innerHTML = `
-                    <div class="flex justify-between items-center text-[10px] text-morning-muted uppercase font-semibold">
-                        <span class="flex items-center gap-1.5">${fav.category} ${ownerBadgeHtml}</span>
-                        <span>Saved ${fav.savedAt || 'Recently'}</span>
-                    </div>
-                    <p class="font-serif text-lg leading-relaxed italic text-morning-text">"${fav.text}"</p>
-                    <div class="flex justify-between items-center pt-2 border-t border-neutral-50">
-                        <button onclick="window.removeFavorite('${fav.docId}')" class="text-[10px] uppercase font-bold text-red-400 tracking-wider flex items-center gap-1 hover:underline">
-                            <i data-lucide="trash" class="w-3 h-3"></i> Remove
-                        </button>
-                        <button onclick="window.shareHistoryFact('${fav.category}', '${fav.text.replace(/'/g, "\\'")}')" class="text-[10px] uppercase font-bold text-morning-accent tracking-wider flex items-center gap-1 hover:underline">
-                            <i data-lucide="share" class="w-3 h-3"></i> Share
-                        </button>
-                    </div>
-                `;
-                container.appendChild(item);
-            });
-            lucide.createIcons();
-        }
-
-        async function removeFavorite(docId) {
-            const myName = appState.userName;
-            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'favorites', docId);
-            const docSnap = await getDoc(docRef);
-
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                let savedBy = data.savedBy || [];
-                
-                // Filter current user out
-                savedBy = savedBy.filter(name => name !== myName);
-                if (savedBy.length === 0) {
-                    await deleteDoc(docRef);
-                } else {
-                    await setDoc(docRef, { savedBy }, { merge: true });
-                }
-                showToast("Removed your save");
-            }
-        }
-
         function updateStreakDashboard() {
             document.getElementById('streak-stat-current').innerText = `${appState.streak} ${appState.streak === 1 ? 'Day' : 'Days'}`;
-            document.getElementById('streak-stat-total').innerText = `${appState.favorites.length} ${appState.favorites.length === 1 ? 'Fact' : 'Facts'}`;
         }
 
         // Bridge helper functions to window for global inline clicks
@@ -948,10 +749,8 @@
             }, 700);
         };
         window.toggleReadToday = toggleReadToday;
-        window.toggleFavoriteToday = toggleFavoriteToday;
         window.selectReaction = selectReaction;
         window.swapUserIdentity = swapUserIdentity;
-        window.removeFavorite = removeFavorite;
         
         window.shareTodayFact = () => {
             const shareText = `🌅 Today's Morning Aura Fact: "${appState.currentFact.text}" (Shared via Mornings PWA)`;
@@ -1008,7 +807,7 @@
             });
             document.getElementById(`tab-${tabName}`).classList.remove('hidden');
 
-            const navButtons = ['today', 'history', 'favorites', 'streak'];
+            const navButtons = ['today', 'history', 'streak'];
             navButtons.forEach(btn => {
                 const btnEl = document.getElementById(`nav-${btn}`);
                 if (btnEl) {
