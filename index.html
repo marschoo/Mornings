@@ -1,0 +1,1113 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no, viewport-fit=cover">
+    <title>Mornings Aura</title>
+    
+    <!-- iOS Web App Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Mornings">
+    
+    <!-- PWA Icons (Dynamic Fallbacks) -->
+    <link rel="apple-touch-icon" href="https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=180&q=80">
+    <link rel="icon" type="image/png" href="https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=32&q=80">
+    
+    <!-- Tailwind CSS & Google Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Base64 Manifest Link for iOS/Android PWA Recognition -->
+    <link id="pwa-manifest" rel="manifest" href="">
+
+    <script>
+        // Configure Tailwind Custom Colors
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        morning: {
+                            bg: '#FBF9F6',      // Warm soft oatmeal
+                            card: '#FFFFFF',    // Pure clean card white
+                            text: '#2C2523',    // Espresso dark gray
+                            accent: '#D06A4C',  // Terracotta sunset warmth
+                            sage: '#8BA18E',    // Morning dew sage green
+                            muted: '#8E8581',   // Soft shadow/dusty sand
+                            accentLight: '#F7EDE9' // Subtle cream terracotta highlight
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        serif: ['"Instrument Serif"', 'Georgia', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Modern iOS-like scrollbars and elastic feel */
+        body {
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #FBF9F6;
+            user-select: none;
+            overflow-x: hidden;
+        }
+        .ios-scroller {
+            -webkit-overflow-scrolling: touch;
+        }
+        /* Custom dynamic height for mobile Safari/Chrome address bars */
+        .h-screen-ios {
+            height: 100vh;
+            height: -webkit-fill-available;
+        }
+    </style>
+</head>
+<body class="h-full text-morning-text select-none overflow-hidden bg-morning-bg flex flex-col">
+
+    <!-- Splash/Welcome Overlay for first load -->
+    <div id="splash-screen" class="fixed inset-0 bg-morning-bg z-50 flex flex-col justify-between p-8 transition-opacity duration-700 ease-in-out">
+        <div class="flex-1 flex flex-col justify-center items-center text-center">
+            <div class="w-16 h-16 bg-morning-accentLight rounded-full flex items-center justify-center mb-6 animate-pulse">
+                <i data-lucide="sun" class="w-8 h-8 text-morning-accent"></i>
+            </div>
+            <h1 class="font-serif text-5xl italic text-morning-accent mb-2">Mornings Aura</h1>
+            <p class="text-morning-muted max-w-xs text-sm">A beautiful, shared space for Marvin & Louise to start the day connected.</p>
+        </div>
+        <div class="text-center pb-8">
+            <button onclick="dismissSplash()" class="w-full max-w-xs bg-morning-text text-white py-4 px-6 rounded-2xl font-medium tracking-wide hover:opacity-90 active:scale-95 transition-all shadow-md">
+                Begin Our Morning
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Navigation Layout -->
+    <div class="flex-1 flex flex-col overflow-hidden max-w-md mx-auto w-full relative">
+        
+        <!-- Top App Bar -->
+        <header class="pt-14 pb-3 px-6 flex justify-between items-center border-b border-gray-100 bg-morning-bg/80 backdrop-blur-md sticky top-0 z-30">
+            <div>
+                <p id="header-date" class="text-xs uppercase tracking-widest text-morning-muted font-semibold">Today</p>
+                <h2 id="header-greeting" class="font-serif text-2xl text-morning-accent italic">Good Morning</h2>
+            </div>
+            <div class="flex items-center gap-3">
+                <!-- Streak Badge -->
+                <div onclick="showTab('streak')" class="flex items-center gap-1.5 bg-morning-accentLight text-morning-accent px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer active:scale-95 transition-transform">
+                    <i data-lucide="flame" class="w-3.5 h-3.5 fill-current"></i>
+                    <span id="streak-count">1</span>
+                </div>
+                <!-- Profile Settings Button -->
+                <button onclick="showTab('settings')" class="p-2 rounded-full hover:bg-gray-100 active:scale-95 transition-transform">
+                    <i data-lucide="settings" class="w-5 h-5 text-morning-muted"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content Area (Tabs) -->
+        <main class="flex-1 overflow-y-auto ios-scroller px-6 pt-4 pb-24">
+            
+            <!-- TAB: TODAY'S FACT -->
+            <section id="tab-today" class="tab-content flex flex-col space-y-6">
+                
+                <!-- Live Cloud Connection Status -->
+                <div id="sync-status-indicator" class="flex items-center justify-center gap-1.5 text-[10px] text-morning-sage font-semibold uppercase tracking-wider bg-morning-sage/10 py-1.5 rounded-full">
+                    <span class="w-2 h-2 rounded-full bg-morning-sage animate-ping"></span>
+                    Syncing live with your partner
+                </div>
+
+                <!-- Hero Fact Card -->
+                <div class="bg-morning-card border border-neutral-100 rounded-3xl p-6 shadow-[0_4px_24px_rgba(44,37,35,0.03)] flex flex-col min-h-[340px] justify-between relative overflow-hidden transition-all duration-300">
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span id="fact-category" class="bg-morning-accentLight text-morning-accent text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
+                                Category
+                            </span>
+                            <span id="fact-date" class="text-xs text-morning-muted font-medium">
+                                Today
+                            </span>
+                        </div>
+                        
+                        <!-- Large Beautiful Serif Text -->
+                        <div class="py-4">
+                            <i data-lucide="quote" class="w-8 h-8 text-morning-accent/10 mb-2"></i>
+                            <p id="fact-text" class="font-serif text-3xl leading-relaxed text-morning-text italic pr-2">
+                                Loading our morning aura...
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Controls inside Hero Card -->
+                    <div class="pt-6 border-t border-neutral-100 flex items-center justify-between">
+                        <!-- Mark as Read Indicator -->
+                        <button id="btn-read" onclick="toggleReadToday()" class="flex items-center gap-2 text-xs font-medium px-3 py-2 rounded-xl transition-all duration-200">
+                            <span id="read-icon-container" class="w-5 h-5 rounded-full flex items-center justify-center border border-morning-muted">
+                                <i data-lucide="check" class="w-3 h-3 text-white hidden"></i>
+                            </span>
+                            <span id="read-text">Mark Read</span>
+                        </button>
+
+                        <!-- Share & Favorite Actions -->
+                        <div class="flex items-center gap-1">
+                            <div class="flex flex-col items-end mr-1">
+                                <span id="fav-by-text" class="text-[9px] text-morning-accent font-semibold tracking-wide"></span>
+                            </div>
+                            <button id="btn-fav" onclick="toggleFavoriteToday()" class="p-2.5 rounded-full hover:bg-neutral-50 active:scale-95 transition-all text-morning-muted flex items-center justify-center">
+                                <i id="fav-icon" data-lucide="heart" class="w-5 h-5"></i>
+                            </button>
+                            <button onclick="shareTodayFact()" class="p-2.5 rounded-full hover:bg-neutral-50 active:scale-95 transition-all text-morning-muted">
+                                <i data-lucide="share" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Real-time Partner Presence Dashboard (Fabulous Sync View) -->
+                <div class="bg-morning-card border border-neutral-100 rounded-2xl p-4 shadow-sm space-y-3">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-morning-muted flex items-center gap-1.5">
+                        <i data-lucide="users" class="w-3.5 h-3.5 text-morning-accent"></i>
+                        Our Morning Progress Today
+                    </h4>
+                    
+                    <div class="grid grid-cols-2 gap-3 pt-1">
+                        <!-- Marvin Box -->
+                        <div class="p-3 bg-neutral-50 rounded-xl border border-neutral-100 flex flex-col justify-between space-y-1">
+                            <span class="text-xs font-semibold text-morning-text">Marvin ☕</span>
+                            <div class="flex items-center gap-1.5 mt-1">
+                                <span id="presence-marvin-badge" class="w-2.5 h-2.5 rounded-full bg-neutral-300"></span>
+                                <span id="presence-marvin-text" class="text-[11px] text-morning-muted">Unread</span>
+                            </div>
+                            <span id="presence-marvin-reaction" class="text-xs italic text-morning-accent font-medium mt-1"></span>
+                        </div>
+
+                        <!-- Louise Box -->
+                        <div class="p-3 bg-neutral-50 rounded-xl border border-neutral-100 flex flex-col justify-between space-y-1">
+                            <span class="text-xs font-semibold text-morning-text">Louise 🥐</span>
+                            <div class="flex items-center gap-1.5 mt-1">
+                                <span id="presence-louise-badge" class="w-2.5 h-2.5 rounded-full bg-neutral-300"></span>
+                                <span id="presence-louise-text" class="text-[11px] text-morning-muted">Unread</span>
+                            </div>
+                            <span id="presence-louise-reaction" class="text-xs italic text-morning-accent font-medium mt-1"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shared Couple Reaction Tray -->
+                <div class="bg-morning-accentLight/40 border border-morning-accentLight rounded-2xl p-5 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h4 class="text-xs font-bold text-morning-accent uppercase tracking-wider flex items-center gap-1.5">
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5 fill-current"></i>
+                            Select Your Reaction
+                        </h4>
+                        <span class="text-[10px] text-morning-muted">Syncs instantly</span>
+                    </div>
+                    
+                    <p class="text-xs text-morning-text/80">How did this morning's fact make you feel? Tap to log and share instantly with your partner:</p>
+                    
+                    <!-- Reactions Grid -->
+                    <div class="grid grid-cols-4 gap-2">
+                        <button onclick="selectReaction('🤯 Mind-blown!')" class="reaction-btn bg-morning-card border border-neutral-100 py-3 rounded-xl flex flex-col items-center justify-center gap-1 hover:border-morning-accent transition-all active:scale-95">
+                            <span class="text-xl">🤯</span>
+                            <span class="text-[9px] font-semibold text-morning-muted">Mindblown</span>
+                        </button>
+                        <button onclick="selectReaction('❤️ Love it')" class="reaction-btn bg-morning-card border border-neutral-100 py-3 rounded-xl flex flex-col items-center justify-center gap-1 hover:border-morning-accent transition-all active:scale-95">
+                            <span class="text-xl">❤️</span>
+                            <span class="text-[9px] font-semibold text-morning-muted">Love It</span>
+                        </button>
+                        <button onclick="selectReaction('🤓 Fascinating')" class="reaction-btn bg-morning-card border border-neutral-100 py-3 rounded-xl flex flex-col items-center justify-center gap-1 hover:border-morning-accent transition-all active:scale-95">
+                            <span class="text-xl">🤓</span>
+                            <span class="text-[9px] font-semibold text-morning-muted">Nerdy</span>
+                        </button>
+                        <button onclick="selectReaction('🤔 Unbelievable!')" class="reaction-btn bg-morning-card border border-neutral-100 py-3 rounded-xl flex flex-col items-center justify-center gap-1 hover:border-morning-accent transition-all active:scale-95">
+                            <span class="text-xl">🤔</span>
+                            <span class="text-[9px] font-semibold text-morning-muted">Intrigued</span>
+                        </button>
+                    </div>
+
+                    <!-- Custom Message box to send to partner -->
+                    <div id="reaction-shared-box" class="bg-morning-card border border-neutral-100 rounded-xl p-3 hidden space-y-2">
+                        <p id="reaction-text-preview" class="text-xs italic text-morning-muted">"Hey Louise! Today's morning fact..."</p>
+                        <div class="flex justify-end gap-2">
+                            <button onclick="copyPartnerText()" class="bg-morning-accent text-white text-[10px] font-semibold tracking-wider uppercase px-3 py-1.5 rounded-lg active:scale-95 transition-all flex items-center gap-1">
+                                <i data-lucide="copy" class="w-3 h-3"></i> Copy Text Message
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB: HISTORY / ARCHIVE -->
+            <section id="tab-history" class="tab-content hidden space-y-4">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="font-serif text-3xl text-morning-text italic">The Library</h3>
+                    <span class="text-xs text-morning-muted">Past 30 Days</span>
+                </div>
+                
+                <div id="history-container" class="space-y-3">
+                    <!-- Loaded dynamically via JS -->
+                </div>
+            </section>
+
+            <!-- TAB: FAVORITES -->
+            <section id="tab-favorites" class="tab-content hidden space-y-4">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="font-serif text-3xl text-morning-text italic">Saved Auras</h3>
+                    <span id="favorites-count-badge" class="text-xs bg-morning-accentLight text-morning-accent px-2 py-1 rounded-full font-bold">0 Saved</span>
+                </div>
+
+                <div id="favorites-container" class="space-y-3">
+                    <!-- Loaded dynamically via JS -->
+                </div>
+            </section>
+
+            <!-- TAB: STREAKS & PROGRESS -->
+            <section id="tab-streak" class="tab-content hidden space-y-6">
+                <div class="text-center py-6 space-y-3">
+                    <div class="w-24 h-24 bg-morning-accentLight rounded-full flex items-center justify-center mx-auto shadow-sm">
+                        <i data-lucide="flame" class="w-12 h-12 text-morning-accent fill-current"></i>
+                    </div>
+                    <h3 class="font-serif text-3xl text-morning-text italic">Our Morning Habit</h3>
+                    <p class="text-sm text-morning-muted max-w-xs mx-auto">Build consistency in your daily morning connection!</p>
+                </div>
+
+                <!-- Streak Stats Card -->
+                <div class="bg-morning-card border border-neutral-100 rounded-2xl p-6 grid grid-cols-2 gap-4 text-center">
+                    <div class="space-y-1">
+                        <span class="text-xs uppercase tracking-wider text-morning-muted">Current Streak</span>
+                        <p id="streak-stat-current" class="text-3xl font-extrabold text-morning-accent">1 Day</p>
+                    </div>
+                    <div class="space-y-1 border-l border-neutral-100">
+                        <span class="text-xs uppercase tracking-wider text-morning-muted">Total Saved</span>
+                        <p id="streak-stat-total" class="text-3xl font-extrabold text-morning-sage">0 Facts</p>
+                    </div>
+                </div>
+
+                <!-- Couple bonding activity helper -->
+                <div class="bg-morning-sage/10 border border-morning-sage/20 rounded-2xl p-5 space-y-3">
+                    <h4 class="text-xs font-bold text-morning-sage uppercase tracking-wider flex items-center gap-1.5">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                        Morning Routine Tip
+                    </h4>
+                    <p class="text-xs text-morning-text/80 leading-relaxed">
+                        Try making it a rule to only read today's fact once you've poured your morning tea or coffee. Sharing this daily ritual creates a small, consistent moment of shared joy, no matter how busy the day gets.
+                    </p>
+                </div>
+            </section>
+
+            <!-- TAB: PARTNER SETTINGS -->
+            <section id="tab-settings" class="tab-content hidden space-y-6">
+                <div>
+                    <h3 class="font-serif text-3xl text-morning-text italic">Identity Setup</h3>
+                    <p class="text-xs text-morning-muted mt-1">Configure your personal profile on this phone.</p>
+                </div>
+
+                <div class="bg-morning-card border border-neutral-100 rounded-2xl p-5 space-y-4">
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold uppercase text-morning-muted tracking-wider">Who is using this phone?</label>
+                        <select id="setting-user-selector" onchange="swapUserIdentity()" class="w-full bg-morning-bg border border-neutral-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-morning-accent transition-colors">
+                            <option value="Marvin">I am Marvin ☕</option>
+                            <option value="Louise">I am Louise 🥐</option>
+                        </select>
+                    </div>
+
+                    <div class="p-3 bg-neutral-50 rounded-xl border border-neutral-100 text-xs text-morning-muted leading-relaxed">
+                        Setting your identity lets the app correctly label who has read today's fact, saved a fact, or reacted. This updates instantly on your partner's screen!
+                    </div>
+                </div>
+
+                <div class="bg-morning-card border border-neutral-100 rounded-2xl p-5 space-y-3">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-morning-muted">Chrome on iOS Installation</h4>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs text-morning-muted">Currently in App Mode:</span>
+                        <span id="pwa-status-badge" class="bg-neutral-100 text-neutral-600 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">Web Browser</span>
+                    </div>
+                    <button onclick="forceShowPwaInstallPrompt()" class="w-full text-center text-xs text-morning-accent underline font-semibold mt-2">
+                        Show Chrome PWA Install Instructions
+                    </button>
+                </div>
+
+                <p class="text-[10px] text-center text-morning-muted">Mornings Aura • Made with love for Marvin & Louise</p>
+            </section>
+        </main>
+
+        <!-- Custom iOS PWA Install Assistant Overlay -->
+        <div id="ios-install-prompt" class="absolute bottom-20 left-4 right-4 bg-morning-text text-white p-5 rounded-2xl shadow-xl z-40 hidden flex flex-col space-y-3">
+            <div class="flex justify-between items-start">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="smartphone" class="text-morning-accent w-5 h-5"></i>
+                    <h4 class="font-bold text-sm">Add to Home Screen in Chrome</h4>
+                </div>
+                <button onclick="dismissInstallPrompt()" class="text-morning-muted hover:text-white p-1">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <p class="text-xs text-neutral-300 leading-relaxed">
+                Enjoy Mornings Aura as a true native app! Tap the standard iOS <span class="font-bold text-white">Share button</span> (in Chrome, this is located next to the URL search bar at the top or in the navigation menu), then scroll down and select <span class="font-bold text-white">"Add to Home Screen"</span>.
+            </p>
+        </div>
+
+        <!-- Custom Copy Toast Notice -->
+        <div id="toast-notice" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-morning-text/95 text-white text-xs px-4 py-3 rounded-full shadow-lg z-50 flex items-center gap-2 pointer-events-none opacity-0 transition-opacity duration-300">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-morning-sage"></i>
+            <span id="toast-message">Copied!</span>
+        </div>
+
+        <!-- Bottom Tab Navigation Bar (iOS design) -->
+        <nav class="absolute bottom-0 left-0 right-0 bg-morning-bg/95 border-t border-neutral-100 py-2 pb-6 px-4 flex justify-around items-center z-30 backdrop-blur-md">
+            <button id="nav-today" onclick="showTab('today')" class="flex flex-col items-center justify-center p-2 text-morning-accent transition-colors">
+                <i data-lucide="sun" class="w-5 h-5 mb-1"></i>
+                <span class="text-[10px] font-semibold">Today</span>
+            </button>
+            <button id="nav-history" onclick="showTab('history')" class="flex flex-col items-center justify-center p-2 text-morning-muted hover:text-morning-accent transition-colors">
+                <i data-lucide="book-open" class="w-5 h-5 mb-1"></i>
+                <span class="text-[10px] font-semibold">Library</span>
+            </button>
+            <button id="nav-favorites" onclick="showTab('favorites')" class="flex flex-col items-center justify-center p-2 text-morning-muted hover:text-morning-accent transition-colors">
+                <i data-lucide="bookmark" class="w-5 h-5 mb-1"></i>
+                <span class="text-[10px] font-semibold">Saved</span>
+            </button>
+            <button id="nav-streak" onclick="showTab('streak')" class="flex flex-col items-center justify-center p-2 text-morning-muted hover:text-morning-accent transition-colors">
+                <i data-lucide="calendar-heart" class="w-5 h-5 mb-1"></i>
+                <span class="text-[10px] font-semibold">Bonding</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Firebase Real-Time Synchronization Modules -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Pre-seeded safe, interesting facts
+        const FACTS = [
+            { id: 1, category: "Space", text: "Neutron stars are so incredibly dense that a single teaspoon of their matter would weigh approximately 6 billion tons on Earth." },
+            { id: 2, category: "Ocean Life", text: "The giant Pacific octopus has three hearts, nine brains, and beautiful blue blood." },
+            { id: 3, category: "Botany", text: "Trees can communicate and support each other through an underground web of fungi, often called the 'Wood Wide Web'." },
+            { id: 4, category: "History", text: "Before erasers were invented, writers and artists used rolled-up balls of moist white bread to clean up graphite pencil marks." },
+            { id: 5, category: "Astronomy", text: "Venus is the only planet in our solar system that spins in a clockwise direction, opposite to almost all other planets." },
+            { id: 6, category: "Nature", text: "Crows can recognize specific human faces, recall them for several years, and even communicate with other crows about which humans are friendly." },
+            { id: 7, category: "Science", text: "Water can boil and freeze at the exact same temperature under a highly precise pressure state known as the 'triple point'." },
+            { id: 8, category: "Botany", text: "A strawberry is not botanically a berry, but avocados, bananas, and watermelons are classified as true berries." },
+            { id: 9, category: "Space", text: "Because space has no atmosphere, it is completely, utterly silent. Sound waves have no medium to travel through." },
+            { id: 10, category: "History", text: "The oldest known customer complaint is a clay tablet written in 1750 BCE in ancient Mesopotamia, where a buyer complained about the quality of copper." },
+            { id: 11, category: "Animal Behavior", text: "Sea otters hold hands while sleeping in water currents to prevent drifting apart from each other." },
+            { id: 12, category: "Food Chemistry", text: "Honey never spoils. Archeologists have uncovered pots of honey in ancient Egyptian tombs that are over 3,000 years old and perfectly edible." },
+            { id: 13, category: "Astronomy", text: "A day on Venus is longer than a Venusian year. It takes Venus 243 Earth days to complete one full rotation, but only 225 Earth days to circle the Sun." },
+            { id: 14, category: "Science", text: "Light traveling from the Sun takes precisely 8 minutes and 20 seconds to reach our eyes on Earth." },
+            { id: 15, category: "Animal Intelligence", text: "When octopuses sleep, they transition through active sleep phases where their skin changes patterns and colors rapidly, suggesting they dream." },
+            { id: 16, category: "Language", text: "The dot above the lowercase letters 'i' and 'j' has an official name: it is called a 'tittle'." },
+            { id: 17, category: "Science", text: "Bananas contain high levels of potassium-40, making them very slightly radioactive, though you'd need to eat 10 million at once to suffer any harm." },
+            { id: 18, category: "History", text: "The current 50-star American flag design was created by Bob Heft as a high school project. His teacher originally gave him a B- grade." },
+            { id: 19, category: "Nature", text: "Wombat droppings are perfectly cube-shaped, which stops them from rolling off rocks and markers used to map out their territory." },
+            { id: 20, category: "Physics", text: "Glass is not actually a liquid; it is an amorphous solid. The rumor that old church windows are thicker at the bottom due to flow is just a manufacturing anomaly." },
+            { id: 21, category: "Space", text: "One day on the Moon lasts about 29.5 Earth days from sunrise to sunset, meaning you experience two weeks of continuous daylight." },
+            { id: 22, category: "History", text: "The world's oldest continuously operating library was founded in Fez, Morocco in 859 CE by a visionary woman named Fatima al-Fihri." },
+            { id: 23, category: "Nature", text: "Sunflowers are hyperaccumulators, meaning they can absorb toxic waste and radiation from the soil. They were planted to clean up Chernobyl and Fukushima." },
+            { id: 24, category: "Zoology", text: "Cows have best friends within their herds and display marked signs of anxiety and stress when separated from them." },
+            { id: 25, category: "History", text: "The legendary writer Mary Shelley kept the calcified heart of her late husband, Percy Bysshe Shelley, inside her writing desk wrapped in silk." },
+            { id: 26, category: "Space", text: "Footprints left by astronauts on the Moon will likely persist for at least 100 million years due to the complete lack of wind or water erosion." },
+            { id: 27, category: "Language", text: "The typewriter keyboard layout (QWERTY) was designed to slow down typing speeds slightly, preventing the mechanical keys of early machines from jamming." },
+            { id: 28, category: "Nature", text: "Puffins choose a single mate for life, constructing an underground burrow to raise their single chick, called a 'puffling', together." },
+            { id: 29, category: "Chemistry", text: "Every single oxygen atom currently in our lungs was once forged inside the core of a dying, massive supergiant star." },
+            { id: 30, category: "History", text: "In the mid-1800s, ketchup was officially sold as a patent medicine to cure indigestion and headaches, before becoming a table condiment." },
+            { id: 31, category: "Science", text: "If you uncoiled all the DNA in your body and laid it end-to-end, it would stretch about 10 billion miles, reaching far past Pluto and back." },
+            { id: 32, category: "Nature", text: "Bamboo is the fastest-growing plant on the planet. Some species can grow up to 35 inches in a single 24-hour period." },
+            { id: 33, category: "Space", text: "Our Milky Way galaxy is on a slow-motion collision course with the neighboring Andromeda galaxy, set to merge in about 4.5 billion years." },
+            { id: 34, category: "Animal Behavior", text: "Gentoo penguins search the entire beach to find the smoothest, most perfect pebble to present to their partner as a marriage proposal." },
+            { id: 35, category: "Humanity", text: "A child's laugh is infectious, but science shows that laughing actually boosts your immune system by releasing protective T-cells and endorphins." },
+            { id: 36, category: "Botany", text: "The scent of freshly cut grass is actually a distress signal plants release to warn neighboring flora of herbivore threats." },
+            { id: 37, category: "Space", text: "Sunset on Mars appears blue to human eyes because the fine red dust in the Martian atmosphere lets blue light penetrate more efficiently." },
+            { id: 38, category: "Zoology", text: "Horses and cows can sleep while standing up by locking their leg joints, but they must lie down to experience deep REM dream sleep." },
+            { id: 39, category: "Geography", text: "Canada has more lake area than the rest of the world's lakes combined, housing over 60% of all lakes on our planet." },
+            { id: 40, category: "History", text: "Ancient Roman concrete was so incredibly durable that structures built over 2,000 years ago still stand today, surviving marine erosion due to volcanic ash." },
+            { id: 41, category: "Nature", text: "The golden poison frog doesn't synthesize its own toxin. It gets it from eating wild forest beetles, and becomes harmless in captivity." },
+            { id: 42, category: "Astronomy", text: "Jupiter is so massive that it is more than twice as heavy as all the other planets in our solar system combined." },
+            { id: 43, category: "Botany", text: "The oldest living tree on Earth is a Great Basin bristlecone pine in California named Methuselah, estimated to be over 4,850 years old." },
+            { id: 44, category: "Art History", text: "Leonardo da Vinci could write with one hand while simultaneously drawing or sketching with his other hand." },
+            { id: 45, category: "Physics", text: "Nothing with mass can travel at the speed of light, because it would require an infinite amount of energy to do so." },
+            { id: 46, category: "Animal Behavior", text: "When dogs play-fight, they will purposefully sneeze to let the other dog know that they are just playing and don't mean any harm." },
+            { id: 47, category: "History", text: "The first novel ever written is widely considered to be 'The Tale of Genji', composed by a Japanese noblewoman named Murasaki Shikibu in 1008 CE." },
+            { id: 48, category: "Space", text: "An astronaut's height can increase by up to two inches while living in space due to the decompression and relaxation of the spine in zero gravity." },
+            { id: 49, category: "Botany", text: "Apples, pears, cherries, and peaches all belong to the Rosaceae family, making them close botanical cousins of the rose flower." },
+            { id: 50, category: "Nature", text: "The majestic monarch butterfly travels up to 3,000 miles during its annual migration, guided entirely by an internal solar compass." },
+            { id: 51, category: "Science", text: "The earth's core contains enough gold to completely cover the entire surface of our planet in a shimmering layer 1.5 feet deep." },
+            { id: 52, category: "Animal Behavior", text: "Cats make a distinct chattering sound when watching birds, which researchers believe is an instinctual expression of excitement or mimicked prey sounds." },
+            { id: 53, category: "History", text: "The original yellow color of post-it notes was an accidental discovery. The lab next door to the creator had scrap yellow paper they used for tests." },
+            { id: 54, category: "Meteorology", text: "A bolt of lightning is extremely hot, reaching temperatures of about 50,000 degrees Fahrenheit—five times hotter than the surface of the sun." },
+            { id: 55, category: "Astronomy", text: "Saturn's rings are not solid bands; they are composed of billions of individual ice particles, rocky debris, and cosmic dust." },
+            { id: 56, category: "Ocean Life", text: "Seashores are lined with sand, but much of the white sand in tropical areas is actually produced by parrotfish grazing on coral reefs." },
+            { id: 57, category: "Science", text: "The human eye is so sensitive that if the Earth were completely flat, you could spot a single candle flame flickering 30 miles away in absolute dark." },
+            { id: 58, category: "History", text: "The ancient Greeks had a word, 'meraki', which means doing something with total love, soul, and creativity, leaving a piece of yourself in your work." },
+            { id: 59, category: "Nature", text: "A group of flamingos is officially called a 'flamboyance', matching their bright pink feathers and social, synchronized dancing." },
+            { id: 60, category: "Space", text: "Voyager 1, launched in 1977, has officially entered interstellar space and is currently the farthest human-made object from Earth." }
+        ];
+
+        // Core App State
+        let appState = {
+            streak: 1,
+            lastOpenedDateStr: '',
+            favorites: [],
+            userName: 'Marvin',   // Set default identity as Marvin locally
+            partnerName: 'Louise', // Set partner name as Louise
+            currentFact: null,
+            todayReadMarvin: false,
+            todayReadLouise: false,
+            marvinReaction: '',
+            louiseReaction: ''
+        };
+
+        // Initialize Firebase
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'mornings-aura-marvin-louise';
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Core execution sequence
+        const init = async () => {
+            // Priority Auth flow
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+                await signInAnonymously(auth);
+            }
+
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    loadLocalIdentity();
+                    setupTodayFact();
+                    setupFirebaseListeners(user);
+                    setupUI();
+                    checkPwaStatus();
+                }
+            });
+        };
+
+        // Loads local choice of who is holding this physical device
+        function loadLocalIdentity() {
+            const savedIdentity = localStorage.getItem('mornings_aura_identity');
+            if (savedIdentity) {
+                appState.userName = savedIdentity;
+                appState.partnerName = savedIdentity === 'Marvin' ? 'Louise' : 'Marvin';
+            } else {
+                appState.userName = 'Marvin';
+                appState.partnerName = 'Louise';
+            }
+        }
+
+        function saveLocalIdentity(name) {
+            localStorage.setItem('mornings_aura_identity', name);
+        }
+
+        function getTodayDateString() {
+            const d = new Date();
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
+
+        // Real-Time Cloud Listeners (RULE 1 & RULE 2 compliant)
+        function setupFirebaseListeners(user) {
+            if (!user) return;
+
+            // 1. Syncing Favorites collection in real-time
+            const favColRef = collection(db, 'artifacts', appId, 'public', 'data', 'favorites');
+            onSnapshot(favColRef, (snapshot) => {
+                appState.favorites = [];
+                snapshot.forEach(docSnap => {
+                    appState.favorites.push({ docId: docSnap.id, ...docSnap.data() });
+                });
+                renderFavoritesTab();
+                updateFavoriteButtonUI();
+                updateStreakDashboard();
+            }, (error) => {
+                console.error("Favorites database error: ", error);
+            });
+
+            // 2. Syncing Today's Interactive state in real-time
+            const todayStr = getTodayDateString();
+            const statusDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'daily_status', todayStr);
+            
+            onSnapshot(statusDocRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    appState.todayReadMarvin = data.marvinRead || false;
+                    appState.todayReadLouise = data.louiseRead || false;
+                    appState.marvinReaction = data.marvinReaction || '';
+                    appState.louiseReaction = data.louiseReaction || '';
+                } else {
+                    appState.todayReadMarvin = false;
+                    appState.todayReadLouise = false;
+                    appState.marvinReaction = '';
+                    appState.louiseReaction = '';
+                }
+                updateReadButtonUI();
+                updateReactionUI();
+                updatePresenceDashboard();
+            }, (error) => {
+                console.error("Daily status database error: ", error);
+            });
+        }
+
+        // Setup Fact based on local math
+        function setupTodayFact() {
+            const todayStr = getTodayDateString();
+            
+            let hash = 0;
+            for (let i = 0; i < todayStr.length; i++) {
+                hash = todayStr.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const factIndex = Math.abs(hash) % FACTS.length;
+            appState.currentFact = FACTS[factIndex];
+
+            const options = { weekday: 'long', month: 'short', day: 'numeric' };
+            const formattedDate = new Date().toLocaleDateString('en-US', options);
+            
+            document.getElementById('header-date').innerText = formattedDate;
+            document.getElementById('fact-date').innerText = formattedDate;
+            document.getElementById('fact-category').innerText = appState.currentFact.category;
+            document.getElementById('fact-text').innerText = appState.currentFact.text;
+
+            handleStreakCalculation(todayStr);
+        }
+
+        function handleStreakCalculation(todayStr) {
+            const lastDateSaved = localStorage.getItem('mornings_last_opened_date');
+            if (lastDateSaved && lastDateSaved !== todayStr) {
+                const lastDate = new Date(lastDateSaved);
+                const todayDate = new Date(todayStr);
+                const timeDiff = Math.abs(todayDate - lastDate);
+                const dayDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+                let savedStreak = parseInt(localStorage.getItem('mornings_streak') || "1");
+                if (dayDiff === 1) {
+                    savedStreak += 1;
+                } else if (dayDiff > 1) {
+                    savedStreak = 1;
+                }
+                appState.streak = savedStreak;
+                localStorage.setItem('mornings_streak', savedStreak.toString());
+            } else if (!lastDateSaved) {
+                appState.streak = 1;
+                localStorage.setItem('mornings_streak', "1");
+            }
+            localStorage.setItem('mornings_last_opened_date', todayStr);
+            document.getElementById('streak-count').innerText = appState.streak;
+        }
+
+        function setupUI() {
+            document.getElementById('setting-user-selector').value = appState.userName;
+            document.getElementById('header-greeting').innerText = `Good Morning, ${appState.userName}`;
+
+            renderHistoryTab();
+            
+            const splashDismissedToday = localStorage.getItem('mornings_splash_dismissed_date');
+            if (splashDismissedToday === getTodayDateString()) {
+                document.getElementById('splash-screen').classList.add('hidden');
+            }
+        }
+
+        // Toggle Favorite & write directly to Firebase with collaborative tagging
+        async function toggleFavoriteToday() {
+            const myName = appState.userName; // 'Marvin' or 'Louise'
+            const favDocId = `fact_${appState.currentFact.id}`;
+            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'favorites', favDocId);
+            
+            const currentFav = appState.favorites.find(f => f.id === appState.currentFact.id);
+
+            if (currentFav) {
+                let savedBy = currentFav.savedBy || [];
+                if (savedBy.includes(myName)) {
+                    // Remove current user
+                    savedBy = savedBy.filter(name => name !== myName);
+                    if (savedBy.length === 0) {
+                        await deleteDoc(docRef);
+                        showToast("Removed from saved library");
+                    } else {
+                        await setDoc(docRef, { savedBy }, { merge: true });
+                        showToast("Removed your save");
+                    }
+                } else {
+                    // Add current user to existing array
+                    savedBy.push(myName);
+                    await setDoc(docRef, { savedBy }, { merge: true });
+                    showToast("You also loved this! ❤️");
+                }
+            } else {
+                // Completely new save
+                await setDoc(docRef, {
+                    id: appState.currentFact.id,
+                    category: appState.currentFact.category,
+                    text: appState.currentFact.text,
+                    savedBy: [myName],
+                    savedAt: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                });
+                showToast("Saved to our library ❤️");
+            }
+        }
+
+        // Toggle Daily Read state and upload directly to shared Daily Status Doc
+        async function toggleReadToday() {
+            const todayStr = getTodayDateString();
+            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'daily_status', todayStr);
+            
+            const amIMarvin = appState.userName === 'Marvin';
+            const currentReadState = amIMarvin ? appState.todayReadMarvin : appState.todayReadLouise;
+            const newReadState = !currentReadState;
+
+            const payload = {};
+            if (amIMarvin) {
+                payload.marvinRead = newReadState;
+            } else {
+                payload.louiseRead = newReadState;
+            }
+
+            await setDoc(docRef, payload, { merge: true });
+            showToast(newReadState ? "Marked as read! ✨" : "Marked as unread");
+        }
+
+        // Select Daily Reaction emoji & sync to partner
+        async function selectReaction(mood) {
+            const todayStr = getTodayDateString();
+            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'daily_status', todayStr);
+            
+            const amIMarvin = appState.userName === 'Marvin';
+            const payload = {};
+
+            if (amIMarvin) {
+                payload.marvinReaction = mood;
+            } else {
+                payload.louiseReaction = mood;
+            }
+
+            await setDoc(docRef, payload, { merge: true });
+            
+            // Build text copy panel if they still want to copy message
+            appState.selectedReaction = mood;
+            const reactionBox = document.getElementById('reaction-shared-box');
+            const preview = document.getElementById('reaction-text-preview');
+            const partnerName = amIMarvin ? 'Louise' : 'Marvin';
+            
+            preview.innerText = `🌅 Good morning ${partnerName}! Just read today's Morning Aura trivia: "${appState.currentFact.text}" \n\nMy reaction: ${mood} - Love, ${appState.userName} ❤️`;
+            reactionBox.classList.remove('hidden');
+        }
+
+        // Update Read Button indicators
+        function updateReadButtonUI() {
+            const amIMarvin = appState.userName === 'Marvin';
+            const myReadState = amIMarvin ? appState.todayReadMarvin : appState.todayReadLouise;
+
+            const btn = document.getElementById('btn-read');
+            const iconContainer = document.getElementById('read-icon-container');
+            const icon = iconContainer.querySelector('i');
+
+            if (myReadState) {
+                btn.classList.add('bg-morning-sage/20', 'text-morning-sage');
+                btn.classList.remove('text-morning-muted', 'bg-transparent');
+                iconContainer.classList.add('bg-morning-sage', 'border-morning-sage');
+                iconContainer.classList.remove('border-morning-muted');
+                icon.classList.remove('hidden');
+            } else {
+                btn.classList.remove('bg-morning-sage/20', 'text-morning-sage');
+                btn.classList.add('text-morning-muted', 'bg-transparent');
+                iconContainer.classList.remove('bg-morning-sage', 'border-morning-sage');
+                iconContainer.classList.add('border-morning-muted');
+                icon.classList.add('hidden');
+            }
+        }
+
+        // Update Active Favorite Button UI State & show cooperative subtexts
+        function updateFavoriteButtonUI() {
+            const icon = document.getElementById('fav-icon');
+            const statusLabel = document.getElementById('fav-by-text');
+            const myName = appState.userName;
+            const partnerName = appState.partnerName;
+
+            const currentFav = appState.favorites.find(f => f.id === appState.currentFact.id);
+
+            if (currentFav) {
+                const savedBy = currentFav.savedBy || [];
+                const iSaved = savedBy.includes(myName);
+                const partnerSaved = savedBy.includes(partnerName);
+
+                if (iSaved && partnerSaved) {
+                    icon.className = "w-5 h-5 text-morning-accent fill-current";
+                    statusLabel.innerText = "Loved by Both ❤️";
+                    statusLabel.className = "text-[9px] text-morning-accent font-bold tracking-wide";
+                } else if (iSaved) {
+                    icon.className = "w-5 h-5 text-morning-accent fill-current";
+                    statusLabel.innerText = "Loved by You";
+                    statusLabel.className = "text-[9px] text-morning-muted font-medium tracking-wide";
+                } else if (partnerSaved) {
+                    icon.className = "w-5 h-5 text-morning-muted";
+                    statusLabel.innerText = `${partnerName} Loved This ✨`;
+                    statusLabel.className = "text-[9px] text-morning-accent font-bold tracking-wide animate-pulse";
+                }
+            } else {
+                icon.className = "w-5 h-5 text-morning-muted";
+                statusLabel.innerText = "";
+            }
+        }
+
+        // Update real-time partner box
+        function updatePresenceDashboard() {
+            // Marvin Dashboard Update
+            const marvinBadge = document.getElementById('presence-marvin-badge');
+            const marvinText = document.getElementById('presence-marvin-text');
+            const marvinReactDisplay = document.getElementById('presence-marvin-reaction');
+            
+            if (appState.todayReadMarvin) {
+                marvinBadge.className = "w-2.5 h-2.5 rounded-full bg-morning-sage";
+                marvinText.innerText = "Read today's fact";
+                marvinReactDisplay.innerText = appState.marvinReaction ? `Reaction: ${appState.marvinReaction}` : '';
+            } else {
+                marvinBadge.className = "w-2.5 h-2.5 rounded-full bg-neutral-300";
+                marvinText.innerText = "Unread";
+                marvinReactDisplay.innerText = '';
+            }
+
+            // Louise Dashboard Update
+            const louiseBadge = document.getElementById('presence-louise-badge');
+            const louiseText = document.getElementById('presence-louise-text');
+            const louiseReactDisplay = document.getElementById('presence-louise-reaction');
+            
+            if (appState.todayReadLouise) {
+                louiseBadge.className = "w-2.5 h-2.5 rounded-full bg-morning-sage";
+                louiseText.innerText = "Read today's fact";
+                louiseReactDisplay.innerText = appState.louiseReaction ? `Reaction: ${appState.louiseReaction}` : '';
+            } else {
+                louiseBadge.className = "w-2.5 h-2.5 rounded-full bg-neutral-300";
+                louiseText.innerText = "Unread";
+                louiseReactDisplay.innerText = '';
+            }
+        }
+
+        // Update Reaction UI grid selector highlights
+        function updateReactionUI() {
+            const myReaction = appState.userName === 'Marvin' ? appState.marvinReaction : appState.louiseReaction;
+            document.querySelectorAll('.reaction-btn').forEach(btn => {
+                if (myReaction && btn.querySelector('span').innerText.includes(myReaction.split(' ')[0])) {
+                    btn.classList.add('border-morning-accent', 'bg-morning-accentLight/30');
+                } else {
+                    btn.classList.remove('border-morning-accent', 'bg-morning-accentLight/30');
+                }
+            });
+        }
+
+        // Swap local device identity
+        function swapUserIdentity() {
+            const selected = document.getElementById('setting-user-selector').value;
+            appState.userName = selected;
+            appState.partnerName = selected === 'Marvin' ? 'Louise' : 'Marvin';
+            
+            saveLocalIdentity(selected);
+            document.getElementById('header-greeting').innerText = `Good Morning, ${appState.userName}`;
+            
+            updateReadButtonUI();
+            updateReactionUI();
+            updatePresenceDashboard();
+            updateFavoriteButtonUI();
+            renderFavoritesTab();
+            
+            showToast(`Switched device profile to ${selected}!`);
+        }
+
+        // Render past 30 days of deterministic facts in history
+        function renderHistoryTab() {
+            const container = document.getElementById('history-container');
+            container.innerHTML = '';
+
+            const today = new Date();
+
+            for (let i = 1; i <= 30; i++) {
+                const pastDate = new Date(today);
+                pastDate.setDate(today.getDate() - i);
+                
+                const dateStr = `${pastDate.getFullYear()}-${String(pastDate.getMonth() + 1).padStart(2, '0')}-${String(pastDate.getDate()).padStart(2, '0')}`;
+                
+                let hash = 0;
+                for (let k = 0; k < dateStr.length; k++) {
+                    hash = dateStr.charCodeAt(k) + ((hash << 5) - hash);
+                }
+                const factIndex = Math.abs(hash) % FACTS.length;
+                const pastFact = FACTS[factIndex];
+
+                const formattedPastDate = pastDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+                const item = document.createElement('div');
+                item.className = 'bg-morning-card border border-neutral-100 rounded-2xl p-5 shadow-[0_2px_12px_rgba(44,37,35,0.01)] flex flex-col justify-between space-y-3';
+                item.innerHTML = `
+                    <div class="flex justify-between items-center text-[10px] text-morning-muted uppercase font-semibold">
+                        <span>${pastFact.category}</span>
+                        <span>${formattedPastDate}</span>
+                    </div>
+                    <p class="font-serif text-lg leading-relaxed italic text-morning-text">"${pastFact.text}"</p>
+                    <div class="flex justify-end gap-2 pt-2 border-t border-neutral-50">
+                        <button onclick="window.shareHistoryFact('${pastFact.category}', '${pastFact.text.replace(/'/g, "\\'")}')" class="text-[10px] uppercase font-bold text-morning-accent tracking-wider flex items-center gap-1 hover:underline">
+                            <i data-lucide="share" class="w-3 h-3"></i> Share
+                        </button>
+                    </div>
+                `;
+                container.appendChild(item);
+            }
+            lucide.createIcons();
+        }
+
+        // Render saved/favorites tab from Real-time cloud state with lovely shared ownership badges
+        function renderFavoritesTab() {
+            const container = document.getElementById('favorites-container');
+            const badge = document.getElementById('favorites-count-badge');
+            container.innerHTML = '';
+
+            const favList = appState.favorites || [];
+            badge.innerText = `${favList.length} Saved`;
+
+            if (favList.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 space-y-2">
+                        <div class="text-3xl">🤍</div>
+                        <p class="text-sm font-medium text-morning-muted">No saved facts yet.</p>
+                        <p class="text-xs text-neutral-400 max-w-xs mx-auto">Tap the heart on today's fact card to save it here forever.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            favList.forEach(fav => {
+                const savedBy = fav.savedBy || [];
+                const bothSaved = savedBy.includes('Marvin') && savedBy.includes('Louise');
+                
+                let ownerBadgeHtml = '';
+                if (bothSaved) {
+                    ownerBadgeHtml = `<span class="bg-morning-accent/15 text-morning-accent text-[9px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">Marvin + Louise ❤️</span>`;
+                } else if (savedBy.includes('Marvin')) {
+                    ownerBadgeHtml = `<span class="bg-neutral-100 text-morning-muted text-[9px] font-bold px-2 py-0.5 rounded-full">Marvin ☕</span>`;
+                } else if (savedBy.includes('Louise')) {
+                    ownerBadgeHtml = `<span class="bg-neutral-100 text-morning-muted text-[9px] font-bold px-2 py-0.5 rounded-full">Louise 🥐</span>`;
+                }
+
+                const item = document.createElement('div');
+                item.className = 'bg-morning-card border border-neutral-100 rounded-2xl p-5 shadow-[0_2px_12px_rgba(44,37,35,0.01)] flex flex-col space-y-3';
+                item.innerHTML = `
+                    <div class="flex justify-between items-center text-[10px] text-morning-muted uppercase font-semibold">
+                        <span class="flex items-center gap-1.5">${fav.category} ${ownerBadgeHtml}</span>
+                        <span>Saved ${fav.savedAt || 'Recently'}</span>
+                    </div>
+                    <p class="font-serif text-lg leading-relaxed italic text-morning-text">"${fav.text}"</p>
+                    <div class="flex justify-between items-center pt-2 border-t border-neutral-50">
+                        <button onclick="window.removeFavorite('${fav.docId}')" class="text-[10px] uppercase font-bold text-red-400 tracking-wider flex items-center gap-1 hover:underline">
+                            <i data-lucide="trash" class="w-3 h-3"></i> Remove
+                        </button>
+                        <button onclick="window.shareHistoryFact('${fav.category}', '${fav.text.replace(/'/g, "\\'")}')" class="text-[10px] uppercase font-bold text-morning-accent tracking-wider flex items-center gap-1 hover:underline">
+                            <i data-lucide="share" class="w-3 h-3"></i> Share
+                        </button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+            lucide.createIcons();
+        }
+
+        async function removeFavorite(docId) {
+            const myName = appState.userName;
+            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'favorites', docId);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                let savedBy = data.savedBy || [];
+                
+                // Filter current user out
+                savedBy = savedBy.filter(name => name !== myName);
+                if (savedBy.length === 0) {
+                    await deleteDoc(docRef);
+                } else {
+                    await setDoc(docRef, { savedBy }, { merge: true });
+                }
+                showToast("Removed your save");
+            }
+        }
+
+        function updateStreakDashboard() {
+            document.getElementById('streak-stat-current').innerText = `${appState.streak} ${appState.streak === 1 ? 'Day' : 'Days'}`;
+            document.getElementById('streak-stat-total').innerText = `${appState.favorites.length} ${appState.favorites.length === 1 ? 'Fact' : 'Facts'}`;
+        }
+
+        // Bridge helper functions to window for global inline clicks
+        window.dismissSplash = () => {
+            const splash = document.getElementById('splash-screen');
+            splash.classList.add('opacity-0');
+            setTimeout(() => {
+                splash.classList.add('hidden');
+                localStorage.setItem('mornings_splash_dismissed_date', getTodayDateString());
+            }, 700);
+        };
+        window.toggleReadToday = toggleReadToday;
+        window.toggleFavoriteToday = toggleFavoriteToday;
+        window.selectReaction = selectReaction;
+        window.swapUserIdentity = swapUserIdentity;
+        window.removeFavorite = removeFavorite;
+        
+        window.shareTodayFact = () => {
+            const shareText = `🌅 Today's Morning Aura Fact: "${appState.currentFact.text}" (Shared via Mornings PWA)`;
+            if (navigator.share) {
+                navigator.share({ title: 'Mornings Aura', text: shareText }).catch(err => console.log(err));
+            } else {
+                copyToClipboard(shareText);
+                showToast("Copied daily fact to clipboard!");
+            }
+        };
+
+        window.shareHistoryFact = (category, text) => {
+            const shareText = `🌅 Past Morning Aura [${category}]: "${text}" (Shared from Mornings app)`;
+            if (navigator.share) {
+                navigator.share({ title: 'Mornings Aura', text: shareText }).catch(err => console.log(err));
+            } else {
+                copyToClipboard(shareText);
+                showToast("Copied fact to clipboard!");
+            }
+        };
+
+        window.copyPartnerText = () => {
+            const previewText = document.getElementById('reaction-text-preview').innerText;
+            copyToClipboard(previewText);
+            showToast("Copied! Paste directly to your partner 💬");
+        };
+
+        // Initialize script logic
+        init();
+    </script>
+
+    <!-- General Application Helper Utilities -->
+    <script>
+        function copyToClipboard(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+            } catch (err) {
+                console.error('Copy fallback issue', err);
+            }
+            document.body.removeChild(textArea);
+        }
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+
+            const navButtons = ['today', 'history', 'favorites', 'streak'];
+            navButtons.forEach(btn => {
+                const btnEl = document.getElementById(`nav-${btn}`);
+                if (btnEl) {
+                    btnEl.classList.remove('text-morning-accent');
+                    btnEl.classList.add('text-morning-muted');
+                }
+            });
+
+            const activeNav = document.getElementById(`nav-${tabName}`);
+            if (activeNav) {
+                activeNav.classList.remove('text-morning-muted');
+                activeNav.classList.add('text-morning-accent');
+            }
+        }
+
+        function registerDynamicServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                const swCode = `
+                    const CACHE_NAME = 'mornings-aura-v1';
+                    const urlsToCache = [
+                        '/',
+                        'https://cdn.tailwindcss.com',
+                        'https://unpkg.com/lucide@latest',
+                        'https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap'
+                    ];
+
+                    self.addEventListener('install', event => {
+                        event.waitUntil(
+                            caches.open(CACHE_NAME).then(cache => {
+                                return cache.addAll(urlsToCache);
+                            })
+                        );
+                    });
+
+                    self.addEventListener('fetch', event => {
+                        event.respondWith(
+                            caches.match(event.request).then(response => {
+                                return response || fetch(event.request);
+                            })
+                        );
+                    });
+                `;
+                const blob = new Blob([swCode], { type: 'application/javascript' });
+                const swUrl = URL.createObjectURL(blob);
+                navigator.serviceWorker.register(swUrl).catch(err => console.warn(err));
+            }
+        }
+
+        function checkPwaStatus() {
+            const isStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+            const badge = document.getElementById('pwa-status-badge');
+            
+            if (isStandalone) {
+                badge.innerText = "Standalone App";
+                badge.className = "bg-morning-sage/20 text-morning-sage text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full";
+            } else {
+                badge.innerText = "Web Browser";
+                badge.className = "bg-neutral-100 text-neutral-600 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full";
+                
+                const isIos = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+                const closedPrompt = localStorage.getItem('mornings_install_prompt_dismissed');
+                
+                if (isIos && !closedPrompt) {
+                    setTimeout(() => {
+                        document.getElementById('ios-install-prompt').classList.remove('hidden');
+                    }, 4000);
+                }
+            }
+        }
+
+        function dismissInstallPrompt() {
+            document.getElementById('ios-install-prompt').classList.add('hidden');
+            localStorage.setItem('mornings_install_prompt_dismissed', 'true');
+        }
+
+        function forceShowPwaInstallPrompt() {
+            document.getElementById('ios-install-prompt').classList.remove('hidden');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast-notice');
+            document.getElementById('toast-message').innerText = message;
+            
+            toast.classList.remove('opacity-0');
+            toast.classList.add('opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0');
+            }, 2500);
+        }
+
+        window.showTab = showTab;
+        window.forceShowPwaInstallPrompt = forceShowPwaInstallPrompt;
+        window.dismissInstallPrompt = dismissInstallPrompt;
+
+        registerDynamicServiceWorker();
+    </script>
+</body>
+</html>
+
+```
