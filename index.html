@@ -1,26 +1,25 @@
-```html
 <!DOCTYPE html>
 <html lang="en" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no, viewport-fit=cover">
-    <title>Mornings Aura</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Mornings</title>
+
     <!-- iOS Web App Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Mornings">
-    
-    <!-- PWA Icons -->
-    <link rel="apple-touch-icon" href="https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=180&q=80">
-    <link rel="icon" type="image/png" href="https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=32&q=80">
-    
+
+    <!-- PWA Icons (inline SVG data URI, no external hotlink) -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjRkJGOUY2Ii8+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iMTgiIGZpbGw9IiNEMDZBNEMiLz48ZyBzdHJva2U9IiNEMDZBNEMiIHN0cm9rZS13aWR0aD0iNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj48bGluZSB4MT0iNTAiIHkxPSIxMCIgeDI9IjUwIiB5Mj0iMjIiLz48bGluZSB4MT0iNTAiIHkxPSI3OCIgeDI9IjUwIiB5Mj0iOTAiLz48bGluZSB4MT0iMTAiIHkxPSI1MCIgeDI9IjIyIiB5Mj0iNTAiLz48bGluZSB4MT0iNzgiIHkxPSI1MCIgeDI9IjkwIiB5Mj0iNTAiLz48bGluZSB4MT0iMjIiIHkxPSIyMiIgeDI9IjMwIiB5Mj0iMzAiLz48bGluZSB4MT0iNzAiIHkxPSI3MCIgeDI9Ijc4IiB5Mj0iNzgiLz48bGluZSB4MT0iNzgiIHkxPSIyMiIgeDI9IjcwIiB5Mj0iMzAiLz48bGluZSB4MT0iMzAiIHkxPSI3MCIgeDI9IjIyIiB5Mj0iNzgiLz48L2c+PC9zdmc+Cg==">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjRkJGOUY2Ii8+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iMTgiIGZpbGw9IiNEMDZBNEMiLz48ZyBzdHJva2U9IiNEMDZBNEMiIHN0cm9rZS13aWR0aD0iNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj48bGluZSB4MT0iNTAiIHkxPSIxMCIgeDI9IjUwIiB5Mj0iMjIiLz48bGluZSB4MT0iNTAiIHkxPSI3OCIgeDI9IjUwIiB5Mj0iOTAiLz48bGluZSB4MT0iMTAiIHkxPSI1MCIgeDI9IjIyIiB5Mj0iNTAiLz48bGluZSB4MT0iNzgiIHkxPSI1MCIgeDI9IjkwIiB5Mj0iNTAiLz48bGluZSB4MT0iMjIiIHkxPSIyMiIgeDI9IjMwIiB5Mj0iMzAiLz48bGluZSB4MT0iNzAiIHkxPSI3MCIgeDI9Ijc4IiB5Mj0iNzgiLz48bGluZSB4MT0iNzgiIHkxPSIyMiIgeDI9IjcwIiB5Mj0iMzAiLz48bGluZSB4MT0iMzAiIHkxPSI3MCIgeDI9IjIyIiB5Mj0iNzgiLz48L2c+PC9zdmc+Cg==">
+
     <!-- Tailwind CSS & Google Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -57,7 +56,6 @@
             -webkit-tap-highlight-color: transparent;
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: #FBF9F6;
-            user-select: none;
             overflow-x: hidden;
         }
         .ios-scroller {
@@ -70,7 +68,7 @@
         }
     </style>
 </head>
-<body class="h-full text-morning-text select-none overflow-hidden bg-morning-bg flex flex-col">
+<body class="h-full text-morning-text overflow-hidden bg-morning-bg flex flex-col">
 
     <!-- Splash/Welcome Overlay for first load -->
     <div id="splash-screen" class="fixed inset-0 bg-morning-bg z-50 flex flex-col justify-between p-8 transition-opacity duration-700 ease-in-out">
@@ -78,246 +76,87 @@
             <div class="w-16 h-16 bg-morning-accentLight rounded-full flex items-center justify-center mb-6 animate-pulse">
                 <i data-lucide="sun" class="w-8 h-8 text-morning-accent"></i>
             </div>
-            <h1 class="font-serif text-5xl italic text-morning-accent mb-2">Mornings Aura</h1>
-            <p class="text-morning-muted max-w-xs text-sm">A beautiful, shared space for Marvin & Louise to start the day connected.</p>
+            <h1 class="font-serif text-5xl italic text-morning-accent mb-2">Mornings</h1>
+            <p class="text-morning-muted max-w-xs text-sm">A little spark of curiosity to start your day.</p>
         </div>
         <div class="text-center pb-8">
             <button onclick="dismissSplash()" class="w-full max-w-xs bg-morning-text text-white py-4 px-6 rounded-2xl font-medium tracking-wide hover:opacity-90 active:scale-95 transition-all shadow-md">
-                Begin Our Morning
+                Begin
             </button>
         </div>
     </div>
 
     <!-- Main Navigation Layout -->
     <div class="flex-1 flex flex-col overflow-hidden max-w-md mx-auto w-full relative">
-        
+
         <!-- Top App Bar -->
         <header class="pt-14 pb-3 px-6 flex justify-between items-center border-b border-gray-100 bg-morning-bg/80 backdrop-blur-md sticky top-0 z-30">
             <div>
                 <p id="header-date" class="text-xs uppercase tracking-widest text-morning-muted font-semibold">Today</p>
-                <h2 id="header-greeting" class="font-serif text-2xl text-morning-accent italic">Good Morning</h2>
-            </div>
-            <div class="flex items-center gap-3">
-                <!-- Streak Badge -->
-                <div onclick="showTab('streak')" class="flex items-center gap-1.5 bg-morning-accentLight text-morning-accent px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer active:scale-95 transition-transform">
-                    <i data-lucide="flame" class="w-3.5 h-3.5 fill-current"></i>
-                    <span id="streak-count">1</span>
-                </div>
-                <!-- Profile Settings Button -->
-                <button onclick="showTab('settings')" class="p-2 rounded-full hover:bg-gray-100 active:scale-95 transition-transform">
-                    <i data-lucide="settings" class="w-5 h-5 text-morning-muted"></i>
-                </button>
+                <h2 class="font-serif text-2xl text-morning-accent italic">Good Morning</h2>
             </div>
         </header>
 
         <!-- Main Content Area (Tabs) -->
         <main class="flex-1 overflow-y-auto ios-scroller px-6 pt-4 pb-24">
-            
+
             <!-- TAB: TODAY'S FACT -->
             <section id="tab-today" class="tab-content flex flex-col space-y-6">
-                
-                <!-- Live Cloud Connection Status -->
-                <div id="sync-status-indicator" class="flex items-center justify-center gap-1.5 text-[10px] text-morning-sage font-semibold uppercase tracking-wider bg-morning-sage/10 py-1.5 rounded-full">
-                    <span id="sync-dot" class="w-2 h-2 rounded-full bg-morning-sage animate-ping"></span>
-                    <span id="sync-status-text">Connecting live...</span>
-                </div>
 
                 <!-- Hero Fact Card -->
                 <div class="bg-morning-card border border-neutral-100 rounded-3xl p-6 shadow-[0_4px_24px_rgba(44,37,35,0.03)] flex flex-col min-h-[320px] justify-between relative overflow-hidden transition-all duration-300">
                     <div class="space-y-4">
                         <div class="flex justify-between items-center">
                             <span id="fact-category" class="bg-morning-accentLight text-morning-accent text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
-                                Category
+                                Curious Fact
                             </span>
                             <span id="fact-date" class="text-xs text-morning-muted font-medium">
                                 Today
                             </span>
                         </div>
-                        
+
                         <!-- Large Beautiful Serif Text -->
                         <div class="py-4">
                             <i data-lucide="quote" class="w-8 h-8 text-morning-accent/10 mb-2"></i>
                             <p id="fact-text" class="font-serif text-3xl leading-relaxed text-morning-text italic pr-2">
-                                Preparing today's aura...
+                                Finding today's fact...
                             </p>
+                            <a id="fact-source-link" href="#" target="_blank" rel="noopener noreferrer" class="hidden mt-3 inline-flex items-center gap-1 text-[11px] text-morning-muted hover:text-morning-accent underline underline-offset-2">
+                                Source <span id="fact-source-name"></span>
+                            </a>
                         </div>
                     </div>
 
                     <!-- Bottom Controls inside Hero Card -->
-                    <div class="pt-6 border-t border-neutral-100 flex items-center justify-between">
-                        <!-- Mark as Read Indicator -->
-                        <button id="btn-read" onclick="toggleReadToday()" class="flex items-center gap-2 text-xs font-medium px-3 py-2 rounded-xl transition-all duration-200">
-                            <span id="read-icon-container" class="w-5 h-5 rounded-full flex items-center justify-center border border-morning-muted">
-                                <i data-lucide="check" class="w-3 h-3 text-white hidden"></i>
-                            </span>
-                            <span id="read-text">Mark Read</span>
+                    <div class="pt-6 border-t border-neutral-100 flex items-center justify-end">
+                        <button onclick="shareTodayFact()" class="p-2.5 rounded-full hover:bg-neutral-50 active:scale-95 transition-all text-morning-muted">
+                            <i data-lucide="share" class="w-5 h-5"></i>
                         </button>
-
-                        <!-- Actions -->
-                        <div class="flex items-center gap-1">
-                            <button onclick="forceSync()" class="p-2.5 rounded-full hover:bg-neutral-50 active:scale-95 transition-all text-morning-muted mr-1" title="Force Sync">
-                                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-                            </button>
-                            <button onclick="shareTodayFact()" class="p-2.5 rounded-full hover:bg-neutral-50 active:scale-95 transition-all text-morning-muted">
-                                <i data-lucide="share" class="w-5 h-5"></i>
-                            </button>
-                        </div>
                     </div>
                 </div>
 
-                <!-- Real-time Partner Presence Dashboard -->
-                <div class="bg-morning-card border border-neutral-100 rounded-2xl p-4 shadow-sm space-y-3">
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-morning-muted flex items-center gap-1.5">
-                        <i data-lucide="users" class="w-3.5 h-3.5 text-morning-accent"></i>
-                        Our Morning Progress Today
-                    </h4>
-                    
-                    <div class="grid grid-cols-2 gap-3 pt-1">
-                        <!-- Marvin Box -->
-                        <div class="p-3 bg-neutral-50 rounded-xl border border-neutral-100 flex flex-col justify-between space-y-1">
-                            <span class="text-xs font-semibold text-morning-text">Marvin ☕</span>
-                            <div class="flex items-center gap-1.5 mt-1">
-                                <span id="presence-marvin-badge" class="w-2.5 h-2.5 rounded-full bg-neutral-300"></span>
-                                <span id="presence-marvin-text" class="text-[11px] text-morning-muted">Unread</span>
-                            </div>
-                            <span id="presence-marvin-reaction" class="text-xs italic text-morning-accent font-medium mt-1"></span>
-                        </div>
-
-                        <!-- Louise Box -->
-                        <div class="p-3 bg-neutral-50 rounded-xl border border-neutral-100 flex flex-col justify-between space-y-1">
-                            <span class="text-xs font-semibold text-morning-text">Louise 🥐</span>
-                            <div class="flex items-center gap-1.5 mt-1">
-                                <span id="presence-louise-badge" class="w-2.5 h-2.5 rounded-full bg-neutral-300"></span>
-                                <span id="presence-louise-text" class="text-[11px] text-morning-muted">Unread</span>
-                            </div>
-                            <span id="presence-louise-reaction" class="text-xs italic text-morning-accent font-medium mt-1"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Shared Couple Reaction Tray -->
-                <div class="bg-morning-accentLight/40 border border-morning-accentLight rounded-2xl p-5 space-y-4">
-                    <div class="flex justify-between items-center">
-                        <h4 class="text-xs font-bold text-morning-accent uppercase tracking-wider flex items-center gap-1.5">
-                            <i data-lucide="sparkles" class="w-3.5 h-3.5 fill-current"></i>
-                            Select Your Reaction
-                        </h4>
-                        <span class="text-[10px] text-morning-muted">Syncs instantly</span>
-                    </div>
-                    
-                    <p class="text-xs text-morning-text/80">How did this morning's fact make you feel? Tap to log and share instantly with your partner:</p>
-                    
-                    <!-- Reactions Grid -->
-                    <div class="grid grid-cols-4 gap-2">
-                        <button onclick="selectReaction('🤯 Mind-blown!')" class="reaction-btn bg-morning-card border border-neutral-100 py-3 rounded-xl flex flex-col items-center justify-center gap-1 hover:border-morning-accent transition-all active:scale-95">
-                            <span class="text-xl">🤯</span>
-                            <span class="text-[9px] font-semibold text-morning-muted">Mindblown</span>
-                        </button>
-                        <button onclick="selectReaction('❤️ Love it')" class="reaction-btn bg-morning-card border border-neutral-100 py-3 rounded-xl flex flex-col items-center justify-center gap-1 hover:border-morning-accent transition-all active:scale-95">
-                            <span class="text-xl">❤️</span>
-                            <span class="text-[9px] font-semibold text-morning-muted">Love It</span>
-                        </button>
-                        <button onclick="selectReaction('🤓 Fascinating')" class="reaction-btn bg-morning-card border border-neutral-100 py-3 rounded-xl flex flex-col items-center justify-center gap-1 hover:border-morning-accent transition-all active:scale-95">
-                            <span class="text-xl">🤓</span>
-                            <span class="text-[9px] font-semibold text-morning-muted">Nerdy</span>
-                        </button>
-                        <button onclick="selectReaction('🤔 Unbelievable!')" class="reaction-btn bg-morning-card border border-neutral-100 py-3 rounded-xl flex flex-col items-center justify-center gap-1 hover:border-morning-accent transition-all active:scale-95">
-                            <span class="text-xl">🤔</span>
-                            <span class="text-[9px] font-semibold text-morning-muted">Intrigued</span>
-                        </button>
-                    </div>
-
-                    <!-- Custom Message box to send to partner -->
-                    <div id="reaction-shared-box" class="bg-morning-card border border-neutral-100 rounded-xl p-3 hidden space-y-2">
-                        <p id="reaction-text-preview" class="text-xs italic text-morning-muted">"Hey!"</p>
-                        <div class="flex justify-end gap-2">
-                            <button onclick="copyPartnerText()" class="bg-morning-accent text-white text-[10px] font-semibold tracking-wider uppercase px-3 py-1.5 rounded-lg active:scale-95 transition-all flex items-center gap-1">
-                                <i data-lucide="copy" class="w-3 h-3"></i> Copy Text Message
-                            </button>
-                        </div>
-                    </div>
+                <!-- Error / retry state, hidden unless the fact fetch fails -->
+                <div id="fact-error-notice" class="hidden bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-center justify-between gap-3">
+                    <p class="text-xs text-amber-800">Couldn't reach the fact service, so we're showing one from the built-in backup list.</p>
+                    <button onclick="retryTodayFact()" class="shrink-0 text-[11px] font-bold uppercase tracking-wider text-amber-800 underline">Retry</button>
                 </div>
             </section>
 
-            <!-- TAB: HISTORY / ARCHIVE -->
+            <!-- TAB: HISTORY / LIBRARY -->
             <section id="tab-history" class="tab-content hidden space-y-4">
                 <div class="flex justify-between items-center mb-2">
                     <h3 class="font-serif text-3xl text-morning-text italic">The Library</h3>
-                    <span class="text-xs text-morning-muted">Past 30 Days</span>
+                    <span id="history-count" class="text-xs text-morning-muted">0 facts</span>
                 </div>
-                
+
+                <div id="history-empty" class="text-center py-16 space-y-2">
+                    <i data-lucide="book-open" class="w-8 h-8 text-morning-muted/40 mx-auto"></i>
+                    <p class="text-sm text-morning-muted max-w-xs mx-auto">Come back each morning — every fact you see gets saved here.</p>
+                </div>
+
                 <div id="history-container" class="space-y-3">
                     <!-- Loaded dynamically via JS -->
                 </div>
-            </section>
-
-            <!-- TAB: STREAKS & PROGRESS -->
-            <section id="tab-streak" class="tab-content hidden space-y-6">
-                <div class="text-center py-6 space-y-3">
-                    <div class="w-24 h-24 bg-morning-accentLight rounded-full flex items-center justify-center mx-auto shadow-sm">
-                        <i data-lucide="flame" class="w-12 h-12 text-morning-accent fill-current"></i>
-                    </div>
-                    <h3 class="font-serif text-3xl text-morning-text italic">Our Morning Habit</h3>
-                    <p class="text-sm text-morning-muted max-w-xs mx-auto">Build consistency in your daily morning connection!</p>
-                </div>
-
-                <!-- Streak Stats Card -->
-                <div class="bg-morning-card border border-neutral-100 rounded-2xl p-6 grid grid-cols-2 gap-4 text-center">
-                    <div class="space-y-1">
-                        <span class="text-xs uppercase tracking-wider text-morning-muted">Current Streak</span>
-                        <p id="streak-stat-current" class="text-3xl font-extrabold text-morning-accent">1 Day</p>
-                    </div>
-                    <div class="space-y-1 border-l border-neutral-100">
-                        <span class="text-xs uppercase tracking-wider text-morning-muted">Status</span>
-                        <p id="streak-stat-status" class="text-lg font-bold text-morning-sage py-1.5">Connected ✨</p>
-                    </div>
-                </div>
-
-                <!-- Couple bonding activity helper -->
-                <div class="bg-morning-sage/10 border border-morning-sage/20 rounded-2xl p-5 space-y-3">
-                    <h4 class="text-xs font-bold text-morning-sage uppercase tracking-wider flex items-center gap-1.5">
-                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-                        Morning Routine Tip
-                    </h4>
-                    <p class="text-xs text-morning-text/80 leading-relaxed">
-                        Try making it a rule to only read today's fact once you've poured your morning tea or coffee. Sharing this daily ritual creates a small, consistent moment of shared joy, no matter how busy the day gets.
-                    </p>
-                </div>
-            </section>
-
-            <!-- TAB: PARTNER SETTINGS -->
-            <section id="tab-settings" class="tab-content hidden space-y-6">
-                <div>
-                    <h3 class="font-serif text-3xl text-morning-text italic">Identity Setup</h3>
-                    <p class="text-xs text-morning-muted mt-1">Configure your personal profile on this phone.</p>
-                </div>
-
-                <div class="bg-morning-card border border-neutral-100 rounded-2xl p-5 space-y-4">
-                    <div class="space-y-2">
-                        <label class="block text-xs font-bold uppercase text-morning-muted tracking-wider">Who is using this phone?</label>
-                        <select id="setting-user-selector" onchange="swapUserIdentity()" class="w-full bg-morning-bg border border-neutral-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-morning-accent transition-colors">
-                            <option value="Marvin">I am Marvin ☕</option>
-                            <option value="Louise">I am Louise 🥐</option>
-                        </select>
-                    </div>
-
-                    <div class="p-3 bg-neutral-50 rounded-xl border border-neutral-100 text-xs text-morning-muted leading-relaxed">
-                        Setting your identity lets the app correctly label who has read today's fact and syncs it automatically to Louise or Marvin's screen!
-                    </div>
-                </div>
-
-                <div class="bg-morning-card border border-neutral-100 rounded-2xl p-5 space-y-3">
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-morning-muted">Chrome on iOS Installation</h4>
-                    <div class="flex justify-between items-center">
-                        <span class="text-xs text-morning-muted">Currently in App Mode:</span>
-                        <span id="pwa-status-badge" class="bg-neutral-100 text-neutral-600 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">Web Browser</span>
-                    </div>
-                    <button onclick="forceShowPwaInstallPrompt()" class="w-full text-center text-xs text-morning-accent underline font-semibold mt-2">
-                        Show Chrome PWA Install Instructions
-                    </button>
-                </div>
-
-                <p class="text-[10px] text-center text-morning-muted">Mornings Aura • Made with love for Marvin & Louise</p>
             </section>
         </main>
 
@@ -326,14 +165,14 @@
             <div class="flex justify-between items-start">
                 <div class="flex items-center gap-2">
                     <i data-lucide="smartphone" class="text-morning-accent w-5 h-5"></i>
-                    <h4 class="font-bold text-sm">Add to Home Screen in Chrome</h4>
+                    <h4 class="font-bold text-sm">Add to Home Screen</h4>
                 </div>
                 <button onclick="dismissInstallPrompt()" class="text-morning-muted hover:text-white p-1">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
             <p class="text-xs text-neutral-300 leading-relaxed">
-                Enjoy Mornings Aura as a true native app! Tap the standard iOS <span class="font-bold text-white">Share button</span> (in Chrome, this is located next to the URL search bar at the top or in the navigation menu), then scroll down and select <span class="font-bold text-white">"Add to Home Screen"</span>.
+                Enjoy Mornings as a true native app! Tap the <span class="font-bold text-white">Share button</span>, then scroll down and select <span class="font-bold text-white">"Add to Home Screen"</span>.
             </p>
         </div>
 
@@ -353,419 +192,213 @@
                 <i data-lucide="book-open" class="w-5 h-5 mb-1"></i>
                 <span class="text-[10px] font-semibold">Library</span>
             </button>
-            <button id="nav-streak" onclick="showTab('streak')" class="flex flex-col items-center justify-center p-2 text-morning-muted hover:text-morning-accent transition-colors">
-                <i data-lucide="calendar-heart" class="w-5 h-5 mb-1"></i>
-                <span class="text-[10px] font-semibold">Bonding</span>
-            </button>
         </nav>
     </div>
 
-    <!-- Zero-Config, Lightweight Cloud Sync Database Logic -->
+    <!-- Fact Fetching & Library Logic -->
     <script>
-        // Pre-seeded high-quality curious facts (Vegetarian/safe list)
-        const FACTS = [
-            { id: 1, category: "Space", text: "Neutron stars are so incredibly dense that a single teaspoon of their matter would weigh approximately 6 billion tons on Earth." },
-            { id: 2, category: "Ocean Life", text: "The giant Pacific octopus has three hearts, nine brains, and beautiful blue blood." },
-            { id: 3, category: "Botany", text: "Trees can communicate and support each other through an underground web of fungi, often called the 'Wood Wide Web'." },
-            { id: 4, category: "History", text: "Before erasers were invented, writers and artists used rolled-up balls of moist white bread to clean up graphite pencil marks." },
-            { id: 5, category: "Astronomy", text: "Venus is the only planet in our solar system that spins in a clockwise direction, opposite to almost all other planets." },
-            { id: 6, category: "Nature", text: "Crows can recognize specific human faces, recall them for several years, and even communicate with other crows about which humans are friendly." },
-            { id: 7, category: "Science", text: "Water can boil and freeze at the exact same temperature under a highly precise pressure state known as the 'triple point'." },
-            { id: 8, category: "Botany", text: "A strawberry is not botanically a berry, but avocados, bananas, and watermelons are classified as true berries." },
-            { id: 9, category: "Space", text: "Because space has no atmosphere, it is completely, utterly silent. Sound waves have no medium to travel through." },
-            { id: 10, category: "History", text: "The oldest known customer complaint is a clay tablet written in 1750 BCE in ancient Mesopotamia, where a buyer complained about the quality of copper." },
-            { id: 11, category: "Animal Behavior", text: "Sea otters hold hands while sleeping in water currents to prevent drifting apart from each other." },
-            { id: 12, category: "Food Chemistry", text: "Honey never spoils. Archeologists have uncovered pots of honey in ancient Egyptian tombs that are over 3,000 years old and perfectly edible." },
-            { id: 13, category: "Astronomy", text: "A day on Venus is longer than a Venusian year. It takes Venus 243 Earth days to complete one full rotation, but only 225 Earth days to circle the Sun." },
-            { id: 14, category: "Science", text: "Light traveling from the Sun takes precisely 8 minutes and 20 seconds to reach our eyes on Earth." },
-            { id: 15, category: "Animal Intelligence", text: "When octopuses sleep, they transition through active sleep phases where their skin changes patterns and colors rapidly, suggesting they dream." },
-            { id: 16, category: "Language", text: "The dot above the lowercase letters 'i' and 'j' has an official name: it is called a 'tittle'." },
-            { id: 17, category: "Science", text: "Bananas contain high levels of potassium-40, making them very slightly radioactive, though you'd need to eat 10 million at once to suffer any harm." },
-            { id: 18, category: "History", text: "The current 50-star American flag design was created by Bob Heft as a high school project. His teacher originally gave him a B- grade." },
-            { id: 19, category: "Nature", text: "Wombat droppings are perfectly cube-shaped, which stops them from rolling off rocks and markers used to map out their territory." },
-            { id: 20, category: "Physics", text: "Glass is not actually a liquid; it is an amorphous solid. The rumor that old church windows are thicker at the bottom due to flow is just a manufacturing anomaly." },
-            { id: 21, category: "Space", text: "One day on the Moon lasts about 29.5 Earth days from sunrise to sunset, meaning you experience two weeks of continuous daylight." },
-            { id: 22, category: "History", text: "The world's oldest continuously operating library was founded in Fez, Morocco in 859 CE by a visionary woman named Fatima al-Fihri." },
-            { id: 23, category: "Nature", text: "Sunflowers are hyperaccumulators, meaning they can absorb toxic waste and radiation from the soil. They were planted to clean up Chernobyl and Fukushima." },
-            { id: 24, category: "Zoology", text: "Cows have best friends within their herds and display marked signs of anxiety and stress when separated from them." },
-            { id: 25, category: "History", text: "The legendary writer Mary Shelley kept the calcified heart of her late husband, Percy Bysshe Shelley, inside her writing desk wrapped in silk." },
-            { id: 26, category: "Space", text: "Footprints left by astronauts on the Moon will likely persist for at least 100 million years due to the complete lack of wind or water erosion." },
-            { id: 27, category: "Language", text: "The typewriter keyboard layout (QWERTY) was designed to slow down typing speeds slightly, preventing the mechanical keys of early machines from jamming." },
-            { id: 28, category: "Nature", text: "Puffins choose a single mate for life, constructing an underground burrow to raise their single chick, called a 'puffling', together." },
-            { id: 29, category: "Chemistry", text: "Every single oxygen atom currently in our lungs was once forged inside the core of a dying, massive supergiant star." },
-            { id: 30, category: "History", text: "In the mid-1800s, ketchup was officially sold as a patent medicine to cure indigestion and headaches, before becoming a table condiment." },
-            { id: 31, category: "Science", text: "If you uncoiled all the DNA in your body and laid it end-to-end, it would stretch about 10 billion miles, reaching far past Pluto and back." },
-            { id: 32, category: "Nature", text: "Bamboo is the fastest-growing plant on the planet. Some species can grow up to 35 inches in a single 24-hour period." },
-            { id: 33, category: "Space", text: "Our Milky Way galaxy is on a slow-motion collision course with the neighboring Andromeda galaxy, set to merge in about 4.5 billion years." },
-            { id: 34, category: "Animal Behavior", text: "Gentoo penguins search the entire beach to find the smoothest, most perfect pebble to present to their partner as a marriage proposal." },
-            { id: 35, category: "Humanity", text: "A child's laugh is infectious, but science shows that laughing actually boosts your immune system by releasing protective T-cells and endorphins." },
-            { id: 36, category: "Botany", text: "The scent of freshly cut grass is actually a distress signal plants release to warn neighboring flora of herbivore threats." },
-            { id: 37, category: "Space", text: "Sunset on Mars appears blue to human eyes because the fine red dust in the Martian atmosphere lets blue light penetrate more efficiently." },
-            { id: 38, category: "Zoology", text: "Horses and cows can sleep while standing up by locking their leg joints, but they must lie down to experience deep REM dream sleep." },
-            { id: 39, category: "Geography", text: "Canada has more lake area than the rest of the world's lakes combined, housing over 60% of all lakes on our planet." },
-            { id: 40, category: "History", text: "Ancient Roman concrete was so incredibly durable that structures built over 2,000 years ago still stand today, surviving marine erosion due to volcanic ash." },
-            { id: 41, category: "Nature", text: "The golden poison frog doesn't synthesize its own toxin. It gets it from eating wild forest beetles, and becomes harmless in captivity." },
-            { id: 42, category: "Astronomy", text: "Jupiter is so massive that it is more than twice as heavy as all the other planets in our solar system combined." },
-            { id: 43, category: "Botany", text: "The oldest living tree on Earth is a Great Basin bristlecone pine in California named Methuselah, estimated to be over 4,850 years old." },
-            { id: 44, category: "Art History", text: "Leonardo da Vinci could write with one hand while simultaneously drawing or sketching with his other hand." },
-            { id: 45, category: "Physics", text: "Nothing with mass can travel at the speed of light, because it would require an infinite amount of energy to do so." },
-            { id: 46, category: "Animal Behavior", text: "When dogs play-fight, they will purposefully sneeze to let the other dog know that they are just playing and don't mean any harm." },
-            { id: 47, category: "History", text: "The first novel ever written is widely considered to be 'The Tale of Genji', composed by a Japanese noblewoman named Murasaki Shikibu in 1008 CE." },
-            { id: 48, category: "Space", text: "An astronaut's height can increase by up to two inches while living in space due to the decompression and relaxation of the spine in zero gravity." },
-            { id: 49, category: "Botany", text: "Apples, pears, cherries, and peaches all belong to the Rosaceae family, making them close botanical cousins of the rose flower." },
-            { id: 50, category: "Nature", text: "The majestic monarch butterfly travels up to 3,000 miles during its annual migration, guided entirely by an internal solar compass." }
+        // Small offline backup list, used only if the live fact service can't be reached.
+        const FALLBACK_FACTS = [
+            "Neutron stars are so incredibly dense that a single teaspoon of their matter would weigh approximately 6 billion tons on Earth.",
+            "The giant Pacific octopus has three hearts, nine brains, and beautiful blue blood.",
+            "Trees can communicate and support each other through an underground web of fungi, often called the 'Wood Wide Web'.",
+            "Honey never spoils. Archeologists have uncovered pots of honey in ancient Egyptian tombs that are over 3,000 years old and perfectly edible.",
+            "A day on Venus is longer than a Venusian year. It takes Venus 243 Earth days to rotate once, but only 225 Earth days to circle the Sun.",
+            "Light traveling from the Sun takes precisely 8 minutes and 20 seconds to reach our eyes on Earth.",
+            "The dot above the lowercase letters 'i' and 'j' has an official name: it is called a 'tittle'.",
+            "Wombat droppings are perfectly cube-shaped, which stops them from rolling off rocks and markers used to map out their territory.",
+            "Glass is not actually a liquid; it is an amorphous solid.",
+            "Sunflowers are hyperaccumulators, meaning they can absorb toxic waste and radiation from the soil.",
+            "Footprints left by astronauts on the Moon will likely persist for at least 100 million years, since there is no wind or water to erode them.",
+            "Every single oxygen atom currently in our lungs was once forged inside the core of a dying, massive supergiant star.",
+            "Bamboo is the fastest-growing plant on the planet. Some species can grow up to 35 inches in a single 24-hour period.",
+            "Our Milky Way galaxy is on a slow-motion collision course with the neighboring Andromeda galaxy, set to merge in about 4.5 billion years.",
+            "A child's laugh is infectious, but science shows laughing actually boosts your immune system by releasing protective T-cells and endorphins.",
+            "Canada has more lake area than the rest of the world's lakes combined, housing over 60% of all lakes on our planet.",
+            "The oldest living tree on Earth is a Great Basin bristlecone pine in California named Methuselah, estimated to be over 4,850 years old.",
+            "Nothing with mass can travel at the speed of light, because it would require an infinite amount of energy to do so.",
+            "Apples, pears, cherries, and peaches all belong to the Rosaceae family, making them close botanical cousins of the rose flower.",
+            "The majestic monarch butterfly travels up to 3,000 miles during its annual migration, guided entirely by an internal solar compass."
         ];
 
-        // Core App State
-        let appState = {
-            streak: 1,
-            lastOpenedDateStr: '',
-            userName: 'Marvin',
-            partnerName: 'Louise',
-            currentFact: null,
-            todayReadMarvin: false,
-            todayReadLouise: false,
-            marvinReaction: '',
-            louiseReaction: ''
-        };
-
-        // Fully open, self-hosted cloud sync API
-        const SYNC_DB_URL = "https://kvdb.io/marvin_louise_aura_v5/status_";
+        const FACT_API_URL = "https://uselessfacts.jsph.pl/api/v2/facts/random?language=en";
+        const HISTORY_KEY = "mornings_fact_history";
+        const HISTORY_LIMIT = 90; // keep the library from growing forever
+        const RECENT_REPEAT_WINDOW = 15; // avoid repeating a fact seen in the last N entries
 
         function getTodayDateString() {
             const d = new Date();
             return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
         }
 
-        // Fetch updates with error protection
-        async function fetchCloudState() {
-            const todayStr = getTodayDateString();
-            const indicatorText = document.getElementById('sync-status-text');
-            const dot = document.getElementById('sync-dot');
-
+        function loadHistory() {
             try {
-                const response = await fetch(SYNC_DB_URL + todayStr);
-                if (response.status === 200) {
-                    const data = await response.json();
-                    
-                    appState.todayReadMarvin = data.marvinRead || false;
-                    appState.todayReadLouise = data.louiseRead || false;
-                    appState.marvinReaction = data.marvinReaction || '';
-                    appState.louiseReaction = data.louiseReaction || '';
+                return JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+            } catch (err) {
+                return [];
+            }
+        }
 
-                    updateReadButtonUI();
-                    updateReactionUI();
-                    updatePresenceDashboard();
-                    
-                    indicatorText.innerText = "Synced live with partner";
-                    dot.className = "w-2 h-2 rounded-full bg-morning-sage animate-ping";
-                } else {
-                    indicatorText.innerText = "Waiting for partner log";
-                    dot.className = "w-2 h-2 rounded-full bg-morning-accent";
+        function saveHistory(history) {
+            localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(-HISTORY_LIMIT)));
+        }
+
+        function isRecentlySeen(text, history) {
+            return history.slice(-RECENT_REPEAT_WINDOW).some(entry => entry.text === text);
+        }
+
+        // Try the live fact API a few times, skipping anything we've shown recently.
+        async function fetchFreshFact(history, attempts = 5) {
+            for (let i = 0; i < attempts; i++) {
+                const response = await fetch(FACT_API_URL);
+                if (!response.ok) throw new Error(`Fact API returned ${response.status}`);
+                const data = await response.json();
+                if (data && data.text && !isRecentlySeen(data.text, history)) {
+                    return { text: data.text, source: data.source || null, sourceUrl: data.source_url || null, offline: false };
                 }
-            } catch (err) {
-                indicatorText.innerText = "Offline Mode";
-                dot.className = "w-2 h-2 rounded-full bg-amber-400";
             }
+            // All attempts collided with recent facts — accept the last one rather than fail.
+            const response = await fetch(FACT_API_URL);
+            const data = await response.json();
+            return { text: data.text, source: data.source || null, sourceUrl: data.source_url || null, offline: false };
         }
 
-        // Write updates safely to public database
-        async function saveCloudState() {
-            const todayStr = getTodayDateString();
-            const payload = {
-                marvinRead: appState.todayReadMarvin,
-                louiseRead: appState.todayReadLouise,
-                marvinReaction: appState.marvinReaction,
-                louiseReaction: appState.louiseReaction
-            };
+        function pickFallbackFact(history) {
+            const unseen = FALLBACK_FACTS.filter(text => !isRecentlySeen(text, history));
+            const pool = unseen.length > 0 ? unseen : FALLBACK_FACTS;
+            const text = pool[Math.floor(Math.random() * pool.length)];
+            return { text, source: "Mornings offline backup", sourceUrl: null, offline: true };
+        }
 
+        // Get (or fetch) today's fact, caching it so refreshing the page doesn't change it mid-day.
+        async function getTodayFact() {
+            const todayStr = getTodayDateString();
+            const history = loadHistory();
+            const existing = history.find(entry => entry.date === todayStr);
+            if (existing) return { fact: existing, history, usedCache: true };
+
+            let fact;
+            let failed = false;
             try {
-                await fetch(SYNC_DB_URL + todayStr, {
-                    method: 'POST',
-                    body: JSON.stringify(payload)
-                });
-                updatePresenceDashboard();
+                fact = await fetchFreshFact(history);
             } catch (err) {
-                console.warn("Could not save to database right now.", err);
+                console.warn("Falling back to offline facts:", err);
+                fact = pickFallbackFact(history);
+                failed = true;
             }
+
+            const entry = { date: todayStr, text: fact.text, source: fact.source, sourceUrl: fact.sourceUrl, offline: fact.offline };
+            history.push(entry);
+            saveHistory(history);
+            return { fact: entry, history, usedCache: false, failed };
         }
 
-        // Setup Fact based on local mathematical seed
-        function setupTodayFact() {
-            const todayStr = getTodayDateString();
-            
-            let hash = 0;
-            for (let i = 0; i < todayStr.length; i++) {
-                hash = todayStr.charCodeAt(i) + ((hash << 5) - hash);
-            }
-            const factIndex = Math.abs(hash) % FACTS.length;
-            appState.currentFact = FACTS[factIndex];
+        async function loadAndRenderTodayFact() {
+            const { fact, failed } = await getTodayFact();
+            renderTodayFact(fact);
+            document.getElementById('fact-error-notice').classList.toggle('hidden', !failed);
+            renderHistoryTab();
+        }
 
+        async function retryTodayFact() {
+            const todayStr = getTodayDateString();
+            let history = loadHistory().filter(entry => entry.date !== todayStr);
+            saveHistory(history);
+            await loadAndRenderTodayFact();
+        }
+        window.retryTodayFact = retryTodayFact;
+
+        function renderTodayFact(fact) {
             const options = { weekday: 'long', month: 'short', day: 'numeric' };
             const formattedDate = new Date().toLocaleDateString('en-US', options);
-            
+
             document.getElementById('header-date').innerText = formattedDate;
             document.getElementById('fact-date').innerText = formattedDate;
-            document.getElementById('fact-category').innerText = appState.currentFact.category;
-            document.getElementById('fact-text').innerText = appState.currentFact.text;
+            document.getElementById('fact-text').innerText = fact.text;
 
-            handleStreakCalculation(todayStr);
-        }
-
-        function handleStreakCalculation(todayStr) {
-            const lastDateSaved = localStorage.getItem('mornings_last_opened_date');
-            if (lastDateSaved && lastDateSaved !== todayStr) {
-                const lastDate = new Date(lastDateSaved);
-                const todayDate = new Date(todayStr);
-                const timeDiff = Math.abs(todayDate - lastDate);
-                const dayDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-
-                let savedStreak = parseInt(localStorage.getItem('mornings_streak') || "1");
-                if (dayDiff === 1) {
-                    savedStreak += 1;
-                } else if (dayDiff > 1) {
-                    savedStreak = 1;
-                }
-                appState.streak = savedStreak;
-                localStorage.setItem('mornings_streak', savedStreak.toString());
-            } else if (!lastDateSaved) {
-                appState.streak = 1;
-                localStorage.setItem('mornings_streak', "1");
-            }
-            localStorage.setItem('mornings_last_opened_date', todayStr);
-            document.getElementById('streak-count').innerText = appState.streak;
-        }
-
-        function loadLocalIdentity() {
-            const savedIdentity = localStorage.getItem('mornings_aura_identity_v5');
-            if (savedIdentity) {
-                appState.userName = savedIdentity;
-                appState.partnerName = savedIdentity === 'Marvin' ? 'Louise' : 'Marvin';
+            const link = document.getElementById('fact-source-link');
+            const sourceName = document.getElementById('fact-source-name');
+            if (fact.sourceUrl) {
+                link.href = fact.sourceUrl;
+                sourceName.innerText = fact.source ? `· ${fact.source}` : '';
+                link.classList.remove('hidden');
             } else {
-                appState.userName = 'Marvin';
-                appState.partnerName = 'Louise';
+                link.classList.add('hidden');
             }
         }
 
-        function saveLocalIdentity(name) {
-            localStorage.setItem('mornings_aura_identity_v5', name);
+        function renderHistoryTab() {
+            const container = document.getElementById('history-container');
+            const emptyState = document.getElementById('history-empty');
+            const countLabel = document.getElementById('history-count');
+            const todayStr = getTodayDateString();
+
+            const history = loadHistory().slice().reverse(); // newest first
+            container.innerHTML = '';
+            countLabel.innerText = `${history.length} fact${history.length === 1 ? '' : 's'}`;
+            emptyState.classList.toggle('hidden', history.length > 0);
+
+            history.forEach(entry => {
+                const isToday = entry.date === todayStr;
+                const formattedDate = new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+                const item = document.createElement('div');
+                item.className = 'bg-morning-card border border-neutral-100 rounded-2xl p-5 shadow-[0_2px_12px_rgba(44,37,35,0.01)] flex flex-col justify-between space-y-3';
+                item.innerHTML = `
+                    <div class="flex justify-between items-center text-[10px] text-morning-muted uppercase font-semibold">
+                        <span>${isToday ? 'Today' : formattedDate}</span>
+                        ${entry.offline ? '<span class="text-amber-600">Offline</span>' : ''}
+                    </div>
+                    <p class="font-serif text-lg leading-relaxed italic text-morning-text">"${entry.text}"</p>
+                    <div class="flex justify-end gap-2 pt-2 border-t border-neutral-50">
+                        <button data-share-text="${entry.text.replace(/"/g, '&quot;')}" class="share-history-btn text-[10px] uppercase font-bold text-morning-accent tracking-wider flex items-center gap-1 hover:underline">
+                            <i data-lucide="share" class="w-3 h-3"></i> Share
+                        </button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+
+            container.querySelectorAll('.share-history-btn').forEach(btn => {
+                btn.addEventListener('click', () => shareFact(btn.getAttribute('data-share-text')));
+            });
+
+            lucide.createIcons();
+        }
+
+        function loadLibraryOnly() {
+            renderHistoryTab();
         }
 
         function setupUI() {
-            document.getElementById('setting-user-selector').value = appState.userName;
-            document.getElementById('header-greeting').innerText = `Good Morning, ${appState.userName}`;
-
-            renderHistoryTab();
-            
             const splashDismissedToday = localStorage.getItem('mornings_splash_dismissed_date');
             if (splashDismissedToday === getTodayDateString()) {
                 document.getElementById('splash-screen').classList.add('hidden');
             }
         }
 
-        // Toggle daily read states
-        async function toggleReadToday() {
-            const amIMarvin = appState.userName === 'Marvin';
-            if (amIMarvin) {
-                appState.todayReadMarvin = !appState.todayReadMarvin;
-            } else {
-                appState.todayReadLouise = !appState.todayReadLouise;
-            }
-
-            updateReadButtonUI();
-            showToast( (amIMarvin ? appState.todayReadMarvin : appState.todayReadLouise) ? "Marked as read! ✨" : "Marked as unread");
-            await saveCloudState();
-        }
-
-        // Log partner reaction status
-        async function selectReaction(mood) {
-            const amIMarvin = appState.userName === 'Marvin';
-            if (amIMarvin) {
-                appState.marvinReaction = mood;
-            } else {
-                appState.louiseReaction = mood;
-            }
-
-            updateReactionUI();
-            
-            appState.selectedReaction = mood;
-            const reactionBox = document.getElementById('reaction-shared-box');
-            const preview = document.getElementById('reaction-text-preview');
-            const partnerName = amIMarvin ? 'Louise' : 'Marvin';
-            
-            preview.innerText = `🌅 Good morning ${partnerName}! Just read today's Morning Aura: "${appState.currentFact.text}" \n\nMy reaction: ${mood} - Love, ${appState.userName} ❤️`;
-            reactionBox.classList.remove('hidden');
-
-            await saveCloudState();
-        }
-
-        function updateReadButtonUI() {
-            const amIMarvin = appState.userName === 'Marvin';
-            const myReadState = amIMarvin ? appState.todayReadMarvin : appState.todayReadLouise;
-
-            const btn = document.getElementById('btn-read');
-            const iconContainer = document.getElementById('read-icon-container');
-            const icon = iconContainer.querySelector('i');
-
-            if (myReadState) {
-                btn.classList.add('bg-morning-sage/20', 'text-morning-sage');
-                btn.classList.remove('text-morning-muted', 'bg-transparent');
-                iconContainer.classList.add('bg-morning-sage', 'border-morning-sage');
-                iconContainer.classList.remove('border-morning-muted');
-                icon.classList.remove('hidden');
-            } else {
-                btn.classList.remove('bg-morning-sage/20', 'text-morning-sage');
-                btn.classList.add('text-morning-muted', 'bg-transparent');
-                iconContainer.classList.remove('bg-morning-sage', 'border-morning-sage');
-                iconContainer.classList.add('border-morning-muted');
-                icon.classList.add('hidden');
-            }
-        }
-
-        function updatePresenceDashboard() {
-            const marvinBadge = document.getElementById('presence-marvin-badge');
-            const marvinText = document.getElementById('presence-marvin-text');
-            const marvinReactDisplay = document.getElementById('presence-marvin-reaction');
-            
-            if (appState.todayReadMarvin) {
-                marvinBadge.className = "w-2.5 h-2.5 rounded-full bg-morning-sage";
-                marvinText.innerText = "Read today's fact";
-                marvinReactDisplay.innerText = appState.marvinReaction ? `Reaction: ${appState.marvinReaction}` : '';
-            } else {
-                marvinBadge.className = "w-2.5 h-2.5 rounded-full bg-neutral-300";
-                marvinText.innerText = "Unread";
-                marvinReactDisplay.innerText = '';
-            }
-
-            const louiseBadge = document.getElementById('presence-louise-badge');
-            const louiseText = document.getElementById('presence-louise-text');
-            const louiseReactDisplay = document.getElementById('presence-louise-reaction');
-            
-            if (appState.todayReadLouise) {
-                louiseBadge.className = "w-2.5 h-2.5 rounded-full bg-morning-sage";
-                louiseText.innerText = "Read today's fact";
-                louiseReactDisplay.innerText = appState.louiseReaction ? `Reaction: ${appState.louiseReaction}` : '';
-            } else {
-                louiseBadge.className = "w-2.5 h-2.5 rounded-full bg-neutral-300";
-                louiseText.innerText = "Unread";
-                louiseReactDisplay.innerText = '';
-            }
-        }
-
-        function updateReactionUI() {
-            const myReaction = appState.userName === 'Marvin' ? appState.marvinReaction : appState.louiseReaction;
-            document.querySelectorAll('.reaction-btn').forEach(btn => {
-                if (myReaction && btn.querySelector('span').innerText.includes(myReaction.split(' ')[0])) {
-                    btn.classList.add('border-morning-accent', 'bg-morning-accentLight/30');
-                } else {
-                    btn.classList.remove('border-morning-accent', 'bg-morning-accentLight/30');
-                }
-            });
-        }
-
-        function swapUserIdentity() {
-            const selected = document.getElementById('setting-user-selector').value;
-            appState.userName = selected;
-            appState.partnerName = selected === 'Marvin' ? 'Louise' : 'Marvin';
-            
-            saveLocalIdentity(selected);
-            document.getElementById('header-greeting').innerText = `Good Morning, ${appState.userName}`;
-            
-            updateReadButtonUI();
-            updateReactionUI();
-            updatePresenceDashboard();
-            
-            showToast(`Switched device profile to ${selected}!`);
-        }
-
-        function renderHistoryTab() {
-            const container = document.getElementById('history-container');
-            container.innerHTML = '';
-
-            const today = new Date();
-
-            for (let i = 1; i <= 30; i++) {
-                const pastDate = new Date(today);
-                pastDate.setDate(today.getDate() - i);
-                
-                const dateStr = `${pastDate.getFullYear()}-${String(pastDate.getMonth() + 1).padStart(2, '0')}-${String(pastDate.getDate()).padStart(2, '0')}`;
-                
-                let hash = 0;
-                for (let k = 0; k < dateStr.length; k++) {
-                    hash = dateStr.charCodeAt(k) + ((hash << 5) - hash);
-                }
-                const factIndex = Math.abs(hash) % FACTS.length;
-                const pastFact = FACTS[factIndex];
-
-                const formattedPastDate = pastDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-
-                const item = document.createElement('div');
-                item.className = 'bg-morning-card border border-neutral-100 rounded-2xl p-5 shadow-[0_2px_12px_rgba(44,37,35,0.01)] flex flex-col justify-between space-y-3';
-                item.innerHTML = `
-                    <div class="flex justify-between items-center text-[10px] text-morning-muted uppercase font-semibold">
-                        <span>${pastFact.category}</span>
-                        <span>${formattedPastDate}</span>
-                    </div>
-                    <p class="font-serif text-lg leading-relaxed italic text-morning-text">"${pastFact.text}"</p>
-                    <div class="flex justify-end gap-2 pt-2 border-t border-neutral-50">
-                        <button onclick="window.shareHistoryFact('${pastFact.category}', '${pastFact.text.replace(/'/g, "\\'")}')" class="text-[10px] uppercase font-bold text-morning-accent tracking-wider flex items-center gap-1 hover:underline">
-                            <i data-lucide="share" class="w-3 h-3"></i> Share
-                        </button>
-                    </div>
-                `;
-                container.appendChild(item);
-            }
-            lucide.createIcons();
-        }
-
-        async function forceSync() {
-            showToast("Syncing fresh data...");
-            await fetchCloudState();
-        }
-
         // Main initial setup trigger
         window.addEventListener('DOMContentLoaded', () => {
             initPwaManifest();
-            loadLocalIdentity();
-            setupTodayFact();
             setupUI();
             checkPwaStatus();
             lucide.createIcons();
-
-            // Run initial sync fetch
-            fetchCloudState();
-
-            // Setup background polling loop to sync with partner every 5 seconds
-            setInterval(fetchCloudState, 5000);
+            loadAndRenderTodayFact();
         });
 
         // Setup dynamic manifest inside headers
         function initPwaManifest() {
+            const iconDataUri = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjRkJGOUY2Ii8+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iMTgiIGZpbGw9IiNEMDZBNEMiLz48ZyBzdHJva2U9IiNEMDZBNEMiIHN0cm9rZS13aWR0aD0iNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj48bGluZSB4MT0iNTAiIHkxPSIxMCIgeDI9IjUwIiB5Mj0iMjIiLz48bGluZSB4MT0iNTAiIHkxPSI3OCIgeDI9IjUwIiB5Mj0iOTAiLz48bGluZSB4MT0iMTAiIHkxPSI1MCIgeDI9IjIyIiB5Mj0iNTAiLz48bGluZSB4MT0iNzgiIHkxPSI1MCIgeDI9IjkwIiB5Mj0iNTAiLz48bGluZSB4MT0iMjIiIHkxPSIyMiIgeDI9IjMwIiB5Mj0iMzAiLz48bGluZSB4MT0iNzAiIHkxPSI3MCIgeDI9Ijc4IiB5Mj0iNzgiLz48bGluZSB4MT0iNzgiIHkxPSIyMiIgeDI9IjcwIiB5Mj0iMzAiLz48bGluZSB4MT0iMzAiIHkxPSI3MCIgeDI9IjIyIiB5Mj0iNzgiLz48L2c+PC9zdmc+Cg==";
             const manifestObj = {
-                "name": "Mornings Aura",
+                "name": "Mornings",
                 "short_name": "Mornings",
                 "start_url": ".",
                 "display": "standalone",
                 "background_color": "#FBF9F6",
                 "theme_color": "#FAF6F0",
-                "description": "Shared daily morning facts for Marvin and Louise.",
+                "description": "A daily curious fact, and a growing library of the ones you've seen.",
                 "icons": [
-                    {
-                        "src": "https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=180&q=80",
-                        "sizes": "180x180",
-                        "type": "image/png",
-                        "purpose": "any"
-                    },
-                    {
-                        "src": "https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=192&q=80",
-                        "sizes": "192x192",
-                        "type": "image/png"
-                    },
-                    {
-                        "src": "https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=512&q=80",
-                        "sizes": "512x512",
-                        "type": "image/png"
-                    }
+                    { "src": iconDataUri, "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
                 ]
             };
             const base64Manifest = "data:application/json;base64," + btoa(JSON.stringify(manifestObj));
@@ -781,46 +414,40 @@
                 localStorage.setItem('mornings_splash_dismissed_date', getTodayDateString());
             }, 700);
         };
-        window.toggleReadToday = toggleReadToday;
-        window.selectReaction = selectReaction;
-        window.swapUserIdentity = swapUserIdentity;
-        window.forceSync = forceSync;
-        
-        window.shareTodayFact = () => {
-            const shareText = `🌅 Today's Morning Aura Fact: "${appState.currentFact.text}" (Shared via Mornings PWA)`;
-            if (navigator.share) {
-                navigator.share({ title: 'Mornings Aura', text: shareText }).catch(err => console.log(err));
-            } else {
-                copyToClipboard(shareText);
-                showToast("Copied daily fact to clipboard!");
-            }
-        };
 
-        window.shareHistoryFact = (category, text) => {
-            const shareText = `🌅 Past Morning Aura [${category}]: "${text}" (Shared from Mornings app)`;
+        function shareFact(text) {
+            const shareText = `🌅 Today's fact from Mornings: "${text}"`;
             if (navigator.share) {
-                navigator.share({ title: 'Mornings Aura', text: shareText }).catch(err => console.log(err));
+                navigator.share({ title: 'Mornings', text: shareText }).catch(err => console.log(err));
             } else {
                 copyToClipboard(shareText);
                 showToast("Copied fact to clipboard!");
             }
-        };
+        }
 
-        window.copyPartnerText = () => {
-            const previewText = document.getElementById('reaction-text-preview').innerText;
-            copyToClipboard(previewText);
-            showToast("Copied! Paste directly to your partner 💬");
+        window.shareTodayFact = () => {
+            const factText = document.getElementById('fact-text').innerText;
+            shareFact(factText);
         };
     </script>
 
     <!-- General Application Helper Utilities -->
     <script>
-        function copyToClipboard(text) {
+        async function copyToClipboard(text) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                try {
+                    await navigator.clipboard.writeText(text);
+                    return;
+                } catch (err) {
+                    console.warn('navigator.clipboard failed, falling back', err);
+                }
+            }
             const textArea = document.createElement("textarea");
             textArea.value = text;
+            textArea.style.position = "fixed";
             textArea.style.top = "0";
             textArea.style.left = "0";
-            textArea.style.position = "fixed";
+            textArea.style.opacity = "0";
             document.body.appendChild(textArea);
             textArea.focus();
             textArea.select();
@@ -838,7 +465,7 @@
             });
             document.getElementById(`tab-${tabName}`).classList.remove('hidden');
 
-            const navButtons = ['today', 'history', 'streak'];
+            const navButtons = ['today', 'history'];
             navButtons.forEach(btn => {
                 const btnEl = document.getElementById(`nav-${btn}`);
                 if (btnEl) {
@@ -852,22 +479,19 @@
                 activeNav.classList.remove('text-morning-muted');
                 activeNav.classList.add('text-morning-accent');
             }
+
+            if (tabName === 'history') {
+                renderHistoryTab();
+            }
         }
 
         function checkPwaStatus() {
             const isStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
-            const badge = document.getElementById('pwa-status-badge');
-            
-            if (isStandalone) {
-                badge.innerText = "Standalone App";
-                badge.className = "bg-morning-sage/20 text-morning-sage text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full";
-            } else {
-                badge.innerText = "Web Browser";
-                badge.className = "bg-neutral-100 text-neutral-600 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full";
-                
+
+            if (!isStandalone) {
                 const isIos = /iPhone|iPad|iPod/i.test(navigator.userAgent);
                 const closedPrompt = localStorage.getItem('mornings_install_prompt_dismissed');
-                
+
                 if (isIos && !closedPrompt) {
                     setTimeout(() => {
                         document.getElementById('ios-install-prompt').classList.remove('hidden');
@@ -881,14 +505,10 @@
             localStorage.setItem('mornings_install_prompt_dismissed', 'true');
         }
 
-        function forceShowPwaInstallPrompt() {
-            document.getElementById('ios-install-prompt').classList.remove('hidden');
-        }
-
         function showToast(message) {
             const toast = document.getElementById('toast-notice');
             document.getElementById('toast-message').innerText = message;
-            
+
             toast.classList.remove('opacity-0');
             toast.classList.add('opacity-100');
 
@@ -899,10 +519,7 @@
         }
 
         window.showTab = showTab;
-        window.forceShowPwaInstallPrompt = forceShowPwaInstallPrompt;
         window.dismissInstallPrompt = dismissInstallPrompt;
     </script>
 </body>
 </html>
-
-```
