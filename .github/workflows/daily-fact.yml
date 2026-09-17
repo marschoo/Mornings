@@ -1,8 +1,8 @@
-name: Add daily fact
+name: Add daily content
 
 on:
   schedule:
-    # Runs once a day so the fact is ready before anyone opens the app,
+    # Runs once a day so today's content is ready before anyone opens the app,
     # regardless of who (or whether anyone) opens it.
     # 04:00 UTC = 6am in Denmark (CET, UTC+1) in winter, 5am in summer (CEST, UTC+2).
     - cron: "0 4 * * *"
@@ -16,7 +16,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  add-fact:
+  add-content:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -25,17 +25,31 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Install dependencies
+        run: npm ci
+
       - name: Fetch today's fact
         run: node scripts/fetch-daily-fact.mjs
 
+      # Only runs once the ANTHROPIC_API_KEY repository secret is configured
+      # (Settings -> Secrets and variables -> Actions). Marked continue-on-error
+      # so a lesson-generation problem never blocks the daily fact from being
+      # committed.
+      - name: Fetch today's Learn lesson
+        if: ${{ secrets.ANTHROPIC_API_KEY != '' }}
+        continue-on-error: true
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node scripts/fetch-daily-lesson.mjs
+
       - name: Commit and push if changed
         run: |
-          if git diff --quiet -- data/facts-history.json; then
+          if git diff --quiet -- data/facts-history.json data/learn-history.json; then
             echo "No changes to commit."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/facts-history.json
-          git commit -m "Add fact of the day"
+          git add data/facts-history.json data/learn-history.json
+          git commit -m "Add daily content"
           git push

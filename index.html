@@ -158,6 +158,62 @@
                     <!-- Loaded dynamically via JS -->
                 </div>
             </section>
+
+            <!-- TAB: LEARN (daily grammar lesson) -->
+            <section id="tab-learn" class="tab-content hidden space-y-5">
+                <div class="flex justify-between items-center mb-1">
+                    <h3 class="font-serif text-3xl text-morning-text italic">Learn</h3>
+                </div>
+
+                <!-- Language toggle -->
+                <div class="bg-neutral-100 rounded-xl p-1 flex gap-1">
+                    <button id="learn-lang-de" onclick="setLearnLanguage('de')" class="flex-1 py-2 rounded-lg text-sm font-semibold transition-all">Deutsch</button>
+                    <button id="learn-lang-da" onclick="setLearnLanguage('da')" class="flex-1 py-2 rounded-lg text-sm font-semibold transition-all">Dansk</button>
+                </div>
+
+                <div id="learn-empty" class="hidden text-center py-16 space-y-2">
+                    <i data-lucide="graduation-cap" class="w-8 h-8 text-morning-muted/40 mx-auto"></i>
+                    <p class="text-sm text-morning-muted max-w-xs mx-auto">No lesson yet — check back soon.</p>
+                </div>
+
+                <div id="learn-error-notice" class="hidden bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-center justify-between gap-3">
+                    <p class="text-xs text-amber-800">Couldn't load today's lesson right now.</p>
+                    <button onclick="retryLearnTab()" class="shrink-0 text-[11px] font-bold uppercase tracking-wider text-amber-800 underline">Retry</button>
+                </div>
+
+                <div id="learn-content" class="hidden space-y-5">
+                    <!-- Rule card -->
+                    <div class="bg-morning-card border border-neutral-100 rounded-3xl p-6 shadow-[0_4px_24px_rgba(44,37,35,0.03)] space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span id="learn-date-label" class="text-xs text-morning-muted font-medium">Today</span>
+                        </div>
+                        <h4 id="learn-rule-title" class="font-serif text-2xl text-morning-accent italic"></h4>
+                        <p id="learn-rule-explanation" class="text-sm text-morning-text/90 leading-relaxed"></p>
+                    </div>
+
+                    <!-- Examples -->
+                    <div class="space-y-2">
+                        <h5 class="text-xs font-bold uppercase tracking-wider text-morning-muted">Examples</h5>
+                        <div id="learn-examples" class="space-y-2">
+                            <!-- Loaded dynamically via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Exercise -->
+                    <div class="bg-morning-accentLight/40 border border-morning-accentLight rounded-2xl p-5 space-y-4">
+                        <h5 class="text-xs font-bold text-morning-accent uppercase tracking-wider">Your turn</h5>
+                        <p id="learn-exercise-prompt" class="font-serif text-xl text-morning-text leading-relaxed"></p>
+                        <div class="flex gap-2">
+                            <input id="learn-exercise-input" type="text" placeholder="Type your answer" autocomplete="off" autocapitalize="off" spellcheck="false" onkeydown="if(event.key==='Enter') checkLearnExercise()" class="flex-1 bg-morning-card border border-neutral-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-morning-accent transition-colors">
+                            <button id="learn-exercise-check" onclick="checkLearnExercise()" class="bg-morning-text text-white text-xs font-semibold uppercase tracking-wider px-4 rounded-xl active:scale-95 transition-all">Check</button>
+                        </div>
+                        <div id="learn-exercise-feedback" class="hidden rounded-xl p-3 text-xs leading-relaxed space-y-1">
+                            <p id="learn-exercise-feedback-headline" class="font-bold"></p>
+                            <p id="learn-exercise-feedback-explanation"></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </main>
 
         <!-- Custom iOS PWA Install Assistant Overlay -->
@@ -191,6 +247,10 @@
             <button id="nav-history" onclick="showTab('history')" class="flex flex-col items-center justify-center p-2 text-morning-muted hover:text-morning-accent transition-colors">
                 <i data-lucide="book-open" class="w-5 h-5 mb-1"></i>
                 <span class="text-[10px] font-semibold">Library</span>
+            </button>
+            <button id="nav-learn" onclick="showTab('learn')" class="flex flex-col items-center justify-center p-2 text-morning-muted hover:text-morning-accent transition-colors">
+                <i data-lucide="graduation-cap" class="w-5 h-5 mb-1"></i>
+                <span class="text-[10px] font-semibold">Learn</span>
             </button>
         </nav>
     </div>
@@ -375,6 +435,142 @@
         };
     </script>
 
+    <!-- Learn Tab Logic (daily grammar lesson, generated once a day server-side) -->
+    <script>
+        const LEARN_DATA_URL = "data/learn-history.json";
+        const LEARN_LANGUAGES = { de: "Deutsch", da: "Dansk" };
+        let cachedLearnHistory = null;
+        let currentLearnLanguage = localStorage.getItem('mornings_learn_language') || 'de';
+        let currentLearnLesson = null;
+
+        async function loadLearnHistory() {
+            if (cachedLearnHistory) return cachedLearnHistory;
+            const response = await fetch(LEARN_DATA_URL, { cache: 'no-store' });
+            if (!response.ok) throw new Error(`Could not load lesson data (${response.status})`);
+            const data = await response.json();
+            cachedLearnHistory = Array.isArray(data) ? data : [];
+            return cachedLearnHistory;
+        }
+
+        function pickLesson(history, language) {
+            const todayStr = getTodayDateString();
+            const forLanguage = history.filter(entry => entry.language === language);
+            const exact = forLanguage.find(entry => entry.date === todayStr);
+            if (exact) return exact;
+            // The daily update may not have run yet — show the most recent
+            // lesson for this language rather than leaving the screen blank.
+            return forLanguage.length > 0 ? forLanguage[forLanguage.length - 1] : null;
+        }
+
+        function setLearnLanguage(language) {
+            currentLearnLanguage = language;
+            localStorage.setItem('mornings_learn_language', language);
+            updateLearnLanguageToggleUI();
+            renderCachedLearnLesson();
+        }
+
+        function updateLearnLanguageToggleUI() {
+            Object.keys(LEARN_LANGUAGES).forEach(code => {
+                const btn = document.getElementById(`learn-lang-${code}`);
+                if (!btn) return;
+                if (code === currentLearnLanguage) {
+                    btn.classList.add('bg-morning-card', 'text-morning-accent', 'shadow-sm');
+                    btn.classList.remove('text-morning-muted');
+                } else {
+                    btn.classList.remove('bg-morning-card', 'text-morning-accent', 'shadow-sm');
+                    btn.classList.add('text-morning-muted');
+                }
+            });
+        }
+
+        async function loadAndRenderLearnTab() {
+            updateLearnLanguageToggleUI();
+            try {
+                await loadLearnHistory();
+                document.getElementById('learn-error-notice').classList.add('hidden');
+                renderCachedLearnLesson();
+            } catch (err) {
+                console.warn("Could not load lesson data:", err);
+                document.getElementById('learn-content').classList.add('hidden');
+                document.getElementById('learn-empty').classList.add('hidden');
+                document.getElementById('learn-error-notice').classList.remove('hidden');
+            }
+        }
+
+        function renderCachedLearnLesson() {
+            if (!cachedLearnHistory) return;
+            const lesson = pickLesson(cachedLearnHistory, currentLearnLanguage);
+            currentLearnLesson = lesson;
+
+            const content = document.getElementById('learn-content');
+            const empty = document.getElementById('learn-empty');
+
+            if (!lesson) {
+                content.classList.add('hidden');
+                empty.classList.remove('hidden');
+                return;
+            }
+            empty.classList.add('hidden');
+            content.classList.remove('hidden');
+
+            const isToday = lesson.date === getTodayDateString();
+            const dateFormatted = new Date(lesson.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            document.getElementById('learn-date-label').innerText = isToday ? 'Today' : dateFormatted;
+            document.getElementById('learn-rule-title').innerText = lesson.rule_title;
+            document.getElementById('learn-rule-explanation').innerText = lesson.rule_explanation;
+
+            const examplesContainer = document.getElementById('learn-examples');
+            examplesContainer.innerHTML = '';
+            (lesson.examples || []).forEach(example => {
+                const item = document.createElement('div');
+                item.className = 'bg-morning-card border border-neutral-100 rounded-xl p-4 space-y-1';
+                item.innerHTML = `
+                    <p class="text-base text-morning-text font-medium"></p>
+                    <p class="text-xs text-morning-muted italic"></p>
+                `;
+                item.querySelector('p:first-child').innerText = example.sentence;
+                item.querySelector('p:last-child').innerText = example.translation;
+                examplesContainer.appendChild(item);
+            });
+
+            document.getElementById('learn-exercise-prompt').innerText = lesson.exercise.prompt;
+            document.getElementById('learn-exercise-input').value = '';
+            document.getElementById('learn-exercise-feedback').classList.add('hidden');
+            lucide.createIcons();
+        }
+
+        function checkLearnExercise() {
+            if (!currentLearnLesson) return;
+            const input = document.getElementById('learn-exercise-input');
+            const userAnswer = input.value.trim().toLowerCase();
+            const correctAnswer = currentLearnLesson.exercise.answer.trim().toLowerCase();
+            const isCorrect = userAnswer.length > 0 && userAnswer === correctAnswer;
+
+            const feedback = document.getElementById('learn-exercise-feedback');
+            const headline = document.getElementById('learn-exercise-feedback-headline');
+            const explanation = document.getElementById('learn-exercise-feedback-explanation');
+
+            feedback.classList.remove('hidden', 'bg-morning-sage/20', 'bg-red-50');
+            if (isCorrect) {
+                feedback.classList.add('bg-morning-sage/20');
+                headline.className = 'font-bold text-morning-sage';
+                headline.innerText = '✓ Correct!';
+            } else {
+                feedback.classList.add('bg-red-50');
+                headline.className = 'font-bold text-red-700';
+                headline.innerText = `Not quite — the answer is "${currentLearnLesson.exercise.answer}"`;
+            }
+            explanation.innerText = currentLearnLesson.exercise.explanation;
+        }
+        window.setLearnLanguage = setLearnLanguage;
+        window.checkLearnExercise = checkLearnExercise;
+
+        window.retryLearnTab = () => {
+            cachedLearnHistory = null;
+            loadAndRenderLearnTab();
+        };
+    </script>
+
     <!-- General Application Helper Utilities -->
     <script>
         async function copyToClipboard(text) {
@@ -409,7 +605,7 @@
             });
             document.getElementById(`tab-${tabName}`).classList.remove('hidden');
 
-            const navButtons = ['today', 'history'];
+            const navButtons = ['today', 'history', 'learn'];
             navButtons.forEach(btn => {
                 const btnEl = document.getElementById(`nav-${btn}`);
                 if (btnEl) {
@@ -426,6 +622,9 @@
 
             if (tabName === 'history') {
                 renderHistoryTab();
+            }
+            if (tabName === 'learn') {
+                loadAndRenderLearnTab();
             }
         }
 
