@@ -1,0 +1,40 @@
+name: Add daily fact
+
+on:
+  schedule:
+    # Runs once a day so the fact is ready before anyone opens the app,
+    # regardless of who (or whether anyone) opens it.
+    - cron: "0 5 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-fact
+  cancel-in-progress: false
+
+jobs:
+  add-fact:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Fetch today's fact
+        run: node scripts/fetch-daily-fact.mjs
+
+      - name: Commit and push if changed
+        run: |
+          if git diff --quiet -- data/facts-history.json; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/facts-history.json
+          git commit -m "Add fact of the day"
+          git push

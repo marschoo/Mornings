@@ -137,7 +137,7 @@
 
                 <!-- Error / retry state, hidden unless the fact fetch fails -->
                 <div id="fact-error-notice" class="hidden bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-center justify-between gap-3">
-                    <p class="text-xs text-amber-800">Couldn't reach the fact service, so we're showing one from the built-in backup list.</p>
+                    <p class="text-xs text-amber-800">Couldn't load today's fact right now. Check your connection and try again.</p>
                     <button onclick="retryTodayFact()" class="shrink-0 text-[11px] font-bold uppercase tracking-wider text-amber-800 underline">Retry</button>
                 </div>
             </section>
@@ -197,123 +197,66 @@
 
     <!-- Fact Fetching & Library Logic -->
     <script>
-        // Small offline backup list, used only if the live fact service can't be reached.
-        const FALLBACK_FACTS = [
-            "Neutron stars are so incredibly dense that a single teaspoon of their matter would weigh approximately 6 billion tons on Earth.",
-            "The giant Pacific octopus has three hearts, nine brains, and beautiful blue blood.",
-            "Trees can communicate and support each other through an underground web of fungi, often called the 'Wood Wide Web'.",
-            "Honey never spoils. Archeologists have uncovered pots of honey in ancient Egyptian tombs that are over 3,000 years old and perfectly edible.",
-            "A day on Venus is longer than a Venusian year. It takes Venus 243 Earth days to rotate once, but only 225 Earth days to circle the Sun.",
-            "Light traveling from the Sun takes precisely 8 minutes and 20 seconds to reach our eyes on Earth.",
-            "The dot above the lowercase letters 'i' and 'j' has an official name: it is called a 'tittle'.",
-            "Wombat droppings are perfectly cube-shaped, which stops them from rolling off rocks and markers used to map out their territory.",
-            "Glass is not actually a liquid; it is an amorphous solid.",
-            "Sunflowers are hyperaccumulators, meaning they can absorb toxic waste and radiation from the soil.",
-            "Footprints left by astronauts on the Moon will likely persist for at least 100 million years, since there is no wind or water to erode them.",
-            "Every single oxygen atom currently in our lungs was once forged inside the core of a dying, massive supergiant star.",
-            "Bamboo is the fastest-growing plant on the planet. Some species can grow up to 35 inches in a single 24-hour period.",
-            "Our Milky Way galaxy is on a slow-motion collision course with the neighboring Andromeda galaxy, set to merge in about 4.5 billion years.",
-            "A child's laugh is infectious, but science shows laughing actually boosts your immune system by releasing protective T-cells and endorphins.",
-            "Canada has more lake area than the rest of the world's lakes combined, housing over 60% of all lakes on our planet.",
-            "The oldest living tree on Earth is a Great Basin bristlecone pine in California named Methuselah, estimated to be over 4,850 years old.",
-            "Nothing with mass can travel at the speed of light, because it would require an infinite amount of energy to do so.",
-            "Apples, pears, cherries, and peaches all belong to the Rosaceae family, making them close botanical cousins of the rose flower.",
-            "The majestic monarch butterfly travels up to 3,000 miles during its annual migration, guided entirely by an internal solar compass."
-        ];
-
-        const FACT_API_URL = "https://uselessfacts.jsph.pl/api/v2/facts/random?language=en";
-        const HISTORY_KEY = "mornings_fact_history";
-        const HISTORY_LIMIT = 90; // keep the library from growing forever
-        const RECENT_REPEAT_WINDOW = 15; // avoid repeating a fact seen in the last N entries
+        // Facts are fetched once a day by a scheduled GitHub Action (see
+        // .github/workflows/daily-fact.yml) and written to this shared file, so
+        // every visitor sees the same fact and it's ready even if nobody opens
+        // the app that day. The client only ever reads this static file.
+        const FACTS_DATA_URL = "data/facts-history.json";
+        let cachedHistory = null;
 
         function getTodayDateString() {
             const d = new Date();
             return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
         }
 
-        function loadHistory() {
-            try {
-                return JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
-            } catch (err) {
-                return [];
-            }
-        }
-
-        function saveHistory(history) {
-            localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(-HISTORY_LIMIT)));
-        }
-
-        function isRecentlySeen(text, history) {
-            return history.slice(-RECENT_REPEAT_WINDOW).some(entry => entry.text === text);
-        }
-
-        // Try the live fact API a few times, skipping anything we've shown recently.
-        async function fetchFreshFact(history, attempts = 5) {
-            for (let i = 0; i < attempts; i++) {
-                const response = await fetch(FACT_API_URL);
-                if (!response.ok) throw new Error(`Fact API returned ${response.status}`);
-                const data = await response.json();
-                if (data && data.text && !isRecentlySeen(data.text, history)) {
-                    return { text: data.text, source: data.source || null, sourceUrl: data.source_url || null, offline: false };
-                }
-            }
-            // All attempts collided with recent facts — accept the last one rather than fail.
-            const response = await fetch(FACT_API_URL);
+        async function loadHistory() {
+            if (cachedHistory) return cachedHistory;
+            const response = await fetch(FACTS_DATA_URL, { cache: 'no-store' });
+            if (!response.ok) throw new Error(`Could not load facts data (${response.status})`);
             const data = await response.json();
-            return { text: data.text, source: data.source || null, sourceUrl: data.source_url || null, offline: false };
+            cachedHistory = Array.isArray(data) ? data : [];
+            return cachedHistory;
         }
 
-        function pickFallbackFact(history) {
-            const unseen = FALLBACK_FACTS.filter(text => !isRecentlySeen(text, history));
-            const pool = unseen.length > 0 ? unseen : FALLBACK_FACTS;
-            const text = pool[Math.floor(Math.random() * pool.length)];
-            return { text, source: "Mornings offline backup", sourceUrl: null, offline: true };
-        }
-
-        // Get (or fetch) today's fact, caching it so refreshing the page doesn't change it mid-day.
-        async function getTodayFact() {
+        function pickTodayFact(history) {
             const todayStr = getTodayDateString();
-            const history = loadHistory();
-            const existing = history.find(entry => entry.date === todayStr);
-            if (existing) return { fact: existing, history, usedCache: true };
-
-            let fact;
-            let failed = false;
-            try {
-                fact = await fetchFreshFact(history);
-            } catch (err) {
-                console.warn("Falling back to offline facts:", err);
-                fact = pickFallbackFact(history);
-                failed = true;
-            }
-
-            const entry = { date: todayStr, text: fact.text, source: fact.source, sourceUrl: fact.sourceUrl, offline: fact.offline };
-            history.push(entry);
-            saveHistory(history);
-            return { fact: entry, history, usedCache: false, failed };
+            const exact = history.find(entry => entry.date === todayStr);
+            if (exact) return exact;
+            // The daily update may not have run yet for today — show the most
+            // recent fact we do have rather than leaving the screen blank.
+            return history.length > 0 ? history[history.length - 1] : null;
         }
 
         async function loadAndRenderTodayFact() {
-            const { fact, failed } = await getTodayFact();
-            renderTodayFact(fact);
-            document.getElementById('fact-error-notice').classList.toggle('hidden', !failed);
-            renderHistoryTab();
+            try {
+                const history = await loadHistory();
+                const fact = pickTodayFact(history);
+                document.getElementById('fact-error-notice').classList.add('hidden');
+                if (fact) {
+                    renderTodayFact(fact);
+                } else {
+                    document.getElementById('fact-text').innerText = "No fact yet — check back soon.";
+                }
+                renderHistoryTab();
+            } catch (err) {
+                console.warn("Could not load facts data:", err);
+                document.getElementById('fact-error-notice').classList.remove('hidden');
+            }
         }
 
         async function retryTodayFact() {
-            const todayStr = getTodayDateString();
-            let history = loadHistory().filter(entry => entry.date !== todayStr);
-            saveHistory(history);
+            cachedHistory = null;
             await loadAndRenderTodayFact();
         }
         window.retryTodayFact = retryTodayFact;
 
         function renderTodayFact(fact) {
-            const options = { weekday: 'long', month: 'short', day: 'numeric' };
-            const formattedDate = new Date().toLocaleDateString('en-US', options);
+            const headerDate = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+            document.getElementById('header-date').innerText = headerDate;
 
-            document.getElementById('header-date').innerText = formattedDate;
-            document.getElementById('fact-date').innerText = formattedDate;
+            const isToday = fact.date === getTodayDateString();
+            const factDateFormatted = new Date(fact.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            document.getElementById('fact-date').innerText = isToday ? 'Today' : factDateFormatted;
             document.getElementById('fact-text').innerText = fact.text;
 
             const link = document.getElementById('fact-source-link');
@@ -327,13 +270,18 @@
             }
         }
 
-        function renderHistoryTab() {
+        async function renderHistoryTab() {
             const container = document.getElementById('history-container');
             const emptyState = document.getElementById('history-empty');
             const countLabel = document.getElementById('history-count');
             const todayStr = getTodayDateString();
 
-            const history = loadHistory().slice().reverse(); // newest first
+            let history;
+            try {
+                history = (await loadHistory()).slice().reverse(); // newest first
+            } catch (err) {
+                history = [];
+            }
             container.innerHTML = '';
             countLabel.innerText = `${history.length} fact${history.length === 1 ? '' : 's'}`;
             emptyState.classList.toggle('hidden', history.length > 0);
@@ -364,10 +312,6 @@
             });
 
             lucide.createIcons();
-        }
-
-        function loadLibraryOnly() {
-            renderHistoryTab();
         }
 
         function setupUI() {
