@@ -4,7 +4,8 @@ on:
   schedule:
     # Runs once a day so the fact is ready before anyone opens the app,
     # regardless of who (or whether anyone) opens it.
-    - cron: "0 5 * * *"
+    # 04:00 UTC = 6am in Denmark (CET, UTC+1) in winter, 5am in summer (CEST, UTC+2).
+    - cron: "0 4 * * *"
   workflow_dispatch: {}
 
 permissions:
