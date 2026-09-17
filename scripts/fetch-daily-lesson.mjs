@@ -24,8 +24,6 @@ const LANGUAGES = [
 ];
 
 const MODEL = "claude-opus-5";
-const HISTORY_LIMIT = 500; // per file, across both languages
-const RECENT_TOPICS_WINDOW = 20; // how many past rule titles (per language) to avoid repeating
 
 const LessonSchema = z.object({
     rule_title: z.string().describe("Short name of the grammar rule, e.g. 'Definite articles in the plural'"),
@@ -65,25 +63,31 @@ async function loadHistory() {
     return parsed;
 }
 
-async function generateLesson(client, languageName, recentTopics) {
+async function generateLesson(client, languageName, coveredTopics) {
     const system =
-        "You write a single daily grammar lesson for an adult beginner-to-intermediate learner of " +
+        "You are teaching a structured, ongoing beginner-to-intermediate " +
         languageName +
-        " as a foreign language. Pick exactly one clear, useful grammar point " +
-        "(e.g. word order, articles and gender, noun cases, verb conjugation and tense, adjective endings, " +
-        "pronouns, prepositions, plural forms, modal verbs, negation). Explain it simply in English. " +
-        "Give exactly three example sentences in " +
+        " grammar curriculum to an adult learner, one lesson per day. This is a learning path, not a " +
+        "random trivia feed: sequence topics so foundational concepts come before the ones that depend " +
+        "on them (e.g. basic sentence structure before subordinate-clause word order, present tense " +
+        "before compound past tenses, singular forms before plural exceptions). Given the list of topics " +
+        "already taught, in the order they were taught, choose the single most logical next topic to " +
+        "introduce. Only revisit an earlier topic when it meaningfully deepens or extends what was " +
+        "already covered (e.g. a new exception or a harder case of the same rule), and say explicitly in " +
+        "the explanation how it builds on the earlier lesson — never repeat a topic as filler. " +
+        "For each lesson: explain the grammar point simply in English; give exactly three example " +
+        "sentences in " +
         languageName +
-        " with natural English translations that clearly demonstrate the rule. " +
-        "Then write one fill-in-the-blank exercise: a sentence in " +
+        " with natural English translations that clearly demonstrate the rule; then write one " +
+        "fill-in-the-blank exercise — a sentence in " +
         languageName +
-        " with a single blank marked as ___ that tests the same rule, its correct answer, a short hint " +
-        "that doesn't give the answer away, and a brief explanation of why that answer is correct.";
+        " with a single blank marked as ___ that tests the same rule — with its correct answer, a short " +
+        "hint that doesn't give the answer away, and a brief explanation of why that answer is correct.";
 
-    const avoidNote =
-        recentTopics.length > 0
-            ? ` Avoid repeating these topics covered in recent days: ${recentTopics.join("; ")}.`
-            : "";
+    const progressNote =
+        coveredTopics.length > 0
+            ? ` Topics already taught, oldest first: ${coveredTopics.join(" -> ")}.`
+            : " No topics have been taught yet — start with the most foundational concept.";
 
     const message = await client.beta.messages.parse({
         model: MODEL,
@@ -94,7 +98,7 @@ async function generateLesson(client, languageName, recentTopics) {
         messages: [
             {
                 role: "user",
-                content: `Create today's ${languageName} grammar lesson.${avoidNote}`
+                content: `Create today's ${languageName} grammar lesson, continuing the curriculum.${progressNote}`
             }
         ]
     });
@@ -119,13 +123,12 @@ async function main() {
             continue;
         }
 
-        const recentTopics = history
+        const coveredTopics = history
             .filter(entry => entry.language === code)
-            .slice(-RECENT_TOPICS_WINDOW)
             .map(entry => entry.rule_title);
 
         try {
-            const lesson = await generateLesson(client, name, recentTopics);
+            const lesson = await generateLesson(client, name, coveredTopics);
             history.push({ date: todayStr, language: code, ...lesson });
             changed = true;
             console.log(`Added ${name} lesson for ${todayStr}: ${lesson.rule_title}`);
@@ -136,8 +139,11 @@ async function main() {
     }
 
     if (changed) {
-        const trimmed = history.slice(-HISTORY_LIMIT);
-        await writeFile(DATA_PATH, JSON.stringify(trimmed, null, 2) + "\n", "utf8");
+        // No trimming here, unlike the facts file: this history is the
+        // curriculum's memory of what's already been taught, and generateLesson()
+        // depends on all of it to sequence topics sensibly — cutting it short
+        // would make the app "forget" grammar it already covered.
+        await writeFile(DATA_PATH, JSON.stringify(history, null, 2) + "\n", "utf8");
     }
 
     if (failures.length > 0) {

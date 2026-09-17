@@ -213,6 +213,17 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Past lessons for the selected language -->
+                <div id="learn-past-section" class="hidden space-y-3 pt-2">
+                    <div class="flex justify-between items-center">
+                        <h5 class="text-xs font-bold uppercase tracking-wider text-morning-muted">Past Lessons</h5>
+                        <span id="learn-past-count" class="text-xs text-morning-muted"></span>
+                    </div>
+                    <div id="learn-past-container" class="space-y-2">
+                        <!-- Loaded dynamically via JS -->
+                    </div>
+                </div>
             </section>
         </main>
 
@@ -508,6 +519,7 @@
             if (!lesson) {
                 content.classList.add('hidden');
                 empty.classList.remove('hidden');
+                renderPastLessons(null);
                 return;
             }
             empty.classList.add('hidden');
@@ -536,7 +548,66 @@
             document.getElementById('learn-exercise-prompt').innerText = lesson.exercise.prompt;
             document.getElementById('learn-exercise-input').value = '';
             document.getElementById('learn-exercise-feedback').classList.add('hidden');
+            renderPastLessons(lesson.date);
             lucide.createIcons();
+        }
+
+        function renderPastLessons(excludeDate) {
+            const section = document.getElementById('learn-past-section');
+            const container = document.getElementById('learn-past-container');
+            const countLabel = document.getElementById('learn-past-count');
+
+            const past = (cachedLearnHistory || [])
+                .filter(entry => entry.language === currentLearnLanguage && entry.date !== excludeDate)
+                .slice()
+                .reverse(); // newest first
+
+            container.innerHTML = '';
+            if (past.length === 0) {
+                section.classList.add('hidden');
+                return;
+            }
+            section.classList.remove('hidden');
+            countLabel.innerText = `${past.length} lesson${past.length === 1 ? '' : 's'}`;
+
+            past.forEach((entry, index) => {
+                const detailId = `learn-past-detail-${index}`;
+                const dateFormatted = new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+                const item = document.createElement('div');
+                item.className = 'bg-morning-card border border-neutral-100 rounded-xl overflow-hidden';
+                item.innerHTML = `
+                    <button class="w-full flex justify-between items-center gap-3 p-4 text-left" onclick="document.getElementById('${detailId}').classList.toggle('hidden')">
+                        <span class="text-sm font-medium text-morning-text"></span>
+                        <span class="text-[10px] text-morning-muted uppercase shrink-0"></span>
+                    </button>
+                    <div id="${detailId}" class="hidden px-4 pb-4 space-y-3 border-t border-neutral-50 pt-3">
+                        <p class="text-xs text-morning-text/80 leading-relaxed"></p>
+                        <div class="space-y-1.5"></div>
+                        <div class="bg-morning-accentLight/30 rounded-lg p-3 space-y-1">
+                            <p class="text-xs text-morning-text"></p>
+                            <p class="text-xs text-morning-sage font-semibold"></p>
+                        </div>
+                    </div>
+                `;
+                item.querySelector('button span:first-child').innerText = entry.rule_title;
+                item.querySelector('button span:last-child').innerText = dateFormatted;
+                item.querySelector('.px-4 > p').innerText = entry.rule_explanation;
+
+                const examplesDiv = item.querySelector('.space-y-1\\.5');
+                (entry.examples || []).forEach(example => {
+                    const exampleP = document.createElement('p');
+                    exampleP.className = 'text-xs text-morning-text';
+                    exampleP.innerText = `${example.sentence} — ${example.translation}`;
+                    examplesDiv.appendChild(exampleP);
+                });
+
+                const exerciseLines = item.querySelectorAll('.bg-morning-accentLight\\/30 p');
+                exerciseLines[0].innerText = entry.exercise.prompt;
+                exerciseLines[1].innerText = `Answer: ${entry.exercise.answer}`;
+
+                container.appendChild(item);
+            });
         }
 
         function checkLearnExercise() {
