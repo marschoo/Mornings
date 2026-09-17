@@ -1,18 +1,18 @@
 // Generates one grammar lesson per language for "today" (UTC) and appends it
-// to data/learn-history.json, using the Claude API. Runs once a day via
-// .github/workflows/daily-fact.yml, alongside the daily fact fetch, so the
-// lesson is the same for every visitor and ready whether or not anyone opens
-// the app that day.
+// to data/learn-history.json, using the Gemini API (free tier). Runs once a
+// day via .github/workflows/daily-fact.yml, alongside the daily fact fetch,
+// so the lesson is the same for every visitor and ready whether or not
+// anyone opens the app that day.
 //
-// Requires the ANTHROPIC_API_KEY secret to be set on the repository
-// (Settings -> Secrets and variables -> Actions). The workflow skips this
-// step entirely if that secret isn't configured yet.
+// Requires the GEMINI_API_KEY secret to be set on the repository (Settings
+// -> Secrets and variables -> Actions), using a free key from Google AI
+// Studio (aistudio.google.com/apikey). The workflow skips this step
+// entirely if that secret isn't configured yet.
 
 import { readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
-import Anthropic from "@anthropic-ai/sdk";
-import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
+import { GoogleGenAI } from "@google/genai";
 import { z } from "zod";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -23,7 +23,9 @@ const LANGUAGES = [
     { code: "da", name: "Danish" }
 ];
 
-const MODEL = "claude-opus-5";
+// Rolling alias for Gemini's current flash-tier model — fast, free-tier
+// friendly, and well suited to a bounded structured-JSON task like this.
+const MODEL = "gemini-flash-latest";
 
 const LessonSchema = z.object({
     rule_title: z.string().describe("Short name of the grammar rule, e.g. 'Definite articles in the plural'"),
@@ -45,6 +47,8 @@ const LessonSchema = z.object({
     })
 });
 
+const LESSON_JSON_SCHEMA = z.toJSONSchema(LessonSchema);
+
 function getTodayDateString() {
     const d = new Date();
     return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(d.getUTCDate()).padStart(2, "0")}`;
@@ -63,8 +67,8 @@ async function loadHistory() {
     return parsed;
 }
 
-async function generateLesson(client, languageName, coveredTopics) {
-    const system =
+async function generateLesson(ai, languageName, coveredTopics) {
+    const instructions =
         "You are teaching a structured, ongoing beginner-to-intermediate " +
         languageName +
         " grammar curriculum to an adult learner, one lesson per day. This is a learning path, not a " +
@@ -89,30 +93,32 @@ async function generateLesson(client, languageName, coveredTopics) {
             ? ` Topics already taught, oldest first: ${coveredTopics.join(" -> ")}.`
             : " No topics have been taught yet — start with the most foundational concept.";
 
-    const message = await client.beta.messages.parse({
+    const prompt =
+        instructions +
+        `\n\nCreate today's ${languageName} grammar lesson, continuing the curriculum.${progressNote}`;
+
+    const response = await ai.models.generateContent({
         model: MODEL,
-        max_tokens: 16000,
-        output_config: { effort: "medium" },
-        output_format: betaZodOutputFormat(LessonSchema),
-        system,
-        messages: [
-            {
-                role: "user",
-                content: `Create today's ${languageName} grammar lesson, continuing the curriculum.${progressNote}`
-            }
-        ]
+        contents: prompt,
+        config: {
+            responseMimeType: "application/json",
+            responseJsonSchema: LESSON_JSON_SCHEMA
+        }
     });
 
-    if (!message.parsed_output) {
-        throw new Error(`Model response for ${languageName} did not parse against the lesson schema`);
+    if (!response.text) {
+        throw new Error(`Empty response for ${languageName} (finishReason: ${response.candidates?.[0]?.finishReason})`);
     }
-    return message.parsed_output;
+
+    // The response is schema-guided but not schema-guaranteed — validate
+    // before trusting it, same as every other external input.
+    return LessonSchema.parse(JSON.parse(response.text));
 }
 
 async function main() {
     const todayStr = getTodayDateString();
     const history = await loadHistory();
-    const client = new Anthropic();
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
     let changed = false;
     const failures = [];
@@ -128,7 +134,7 @@ async function main() {
             .map(entry => entry.rule_title);
 
         try {
-            const lesson = await generateLesson(client, name, coveredTopics);
+            const lesson = await generateLesson(ai, name, coveredTopics);
             history.push({ date: todayStr, language: code, ...lesson });
             changed = true;
             console.log(`Added ${name} lesson for ${todayStr}: ${lesson.rule_title}`);

@@ -4,7 +4,7 @@
   "type": "module",
   "description": "Data-generation scripts for the Mornings static site (run by scheduled GitHub Actions).",
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.71.0",
+    "@google/genai": "^2.23.0",
     "zod": "^4.6.5"
   }
 }

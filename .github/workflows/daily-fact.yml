@@ -31,15 +31,16 @@ jobs:
       - name: Fetch today's fact
         run: node scripts/fetch-daily-fact.mjs
 
-      # Only runs once the ANTHROPIC_API_KEY repository secret is configured
-      # (Settings -> Secrets and variables -> Actions). Marked continue-on-error
+      # Only runs once the GEMINI_API_KEY repository secret is configured
+      # (Settings -> Secrets and variables -> Actions), using a free key from
+      # Google AI Studio (aistudio.google.com/apikey). Marked continue-on-error
       # so a lesson-generation problem never blocks the daily fact from being
       # committed.
       - name: Fetch today's Learn lesson
-        if: ${{ secrets.ANTHROPIC_API_KEY != '' }}
+        if: ${{ secrets.GEMINI_API_KEY != '' }}
         continue-on-error: true
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: node scripts/fetch-daily-lesson.mjs
 
       - name: Commit and push if changed
