@@ -44,12 +44,16 @@ function getTodayDateString() {
 }
 
 async function loadHistory() {
+    let raw;
     try {
-        const raw = await readFile(DATA_PATH, "utf8");
-        return JSON.parse(raw);
+        raw = await readFile(DATA_PATH, "utf8");
     } catch (err) {
-        return [];
+        if (err.code === "ENOENT") return []; // first run, no file yet
+        throw err; // any other read failure must not be treated as "empty"
     }
+    const parsed = JSON.parse(raw); // a parse error here must fail the run, not silently start from []
+    if (!Array.isArray(parsed)) throw new Error(`${DATA_PATH} does not contain a JSON array`);
+    return parsed;
 }
 
 function isRecentlySeen(text, history) {
