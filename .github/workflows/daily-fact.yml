@@ -4,8 +4,11 @@ on:
   schedule:
     # Runs once a day so today's content is ready before anyone opens the app,
     # regardless of who (or whether anyone) opens it.
-    # 04:00 UTC = 6am in Denmark (CET, UTC+1) in winter, 5am in summer (CEST, UTC+2).
-    - cron: "0 4 * * *"
+    # ~04:00 UTC = 6am in Denmark (CET, UTC+1) in winter, 5am in summer (CEST, UTC+2).
+    # Off the exact hour on purpose: GitHub's own docs warn that schedules
+    # landing on :00 are more likely to be delayed under high load across
+    # all of GitHub Actions, since that's when most cron jobs fire.
+    - cron: "13 4 * * *"
   workflow_dispatch: {}
 
 permissions:
