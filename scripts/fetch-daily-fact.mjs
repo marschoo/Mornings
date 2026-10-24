@@ -113,15 +113,20 @@ async function fetchWikipediaDYK() {
     if (!html) throw new Error("Wikipedia DYK: no parse.text in response");
 
     const items = [...html.matchAll(/<li>([\s\S]*?)<\/li>/g)].map(m => m[1]);
-    if (items.length === 0) throw new Error("Wikipedia DYK: no <li> hooks found in template");
+    // The template also renders footer/nav links (e.g. "Nominate an article")
+    // as <li> elements alongside the real hooks. Every real DYK hook follows
+    // Wikipedia's house style of starting with an ellipsis ("... that ..."),
+    // which reliably tells the two apart.
+    const hooks = items
+        .map(html => ({ html, text: stripHtml(html) }))
+        .filter(item => item.text.startsWith("...") && item.text.length >= 25);
+    if (hooks.length === 0) throw new Error("Wikipedia DYK: no '...'-prefixed hooks found in template");
 
-    const chosenHtml = pick(items);
-    const linkMatch = chosenHtml.match(/<a[^>]+href="(\/wiki\/[^"#]+)"/);
-    const text = stripHtml(chosenHtml);
-    if (text.length < 15) throw new Error("Wikipedia DYK: extracted hook too short to be real");
+    const chosen = pick(hooks);
+    const linkMatch = chosen.html.match(/<a[^>]+href="(\/wiki\/[^"#]+)"/);
 
     return {
-        text: /[.!?]$/.test(text) ? text : `${text}.`,
+        text: /[.!?]$/.test(chosen.text) ? chosen.text : `${chosen.text}.`,
         source: "Wikipedia — Did You Know",
         sourceUrl: linkMatch ? `https://en.wikipedia.org${linkMatch[1]}` : "https://en.wikipedia.org/wiki/Main_Page"
     };
