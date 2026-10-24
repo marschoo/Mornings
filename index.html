@@ -51,6 +51,18 @@
         }
     </script>
     <style>
+        /* Pin html/body to the real viewport height. Tailwind's h-full
+           (height:100%) alone doesn't reliably constrain this chain once
+           content grows taller than the screen — main's own overflow-y-auto
+           never kicks in, and overflow-hidden on body ends up suppressing
+           all scrolling instead of just hiding overflow that never existed.
+           These selectors target the same h-full classes already on
+           <html>/<body> at a higher specificity so they reliably win. */
+        html.h-full, body.h-full {
+            height: 100vh;
+            height: -webkit-fill-available; /* older iOS Safari */
+            height: 100dvh; /* accounts for mobile browser chrome collapsing */
+        }
         /* Modern iOS-like scrollbars and elastic feel */
         body {
             -webkit-tap-highlight-color: transparent;
@@ -60,11 +72,6 @@
         }
         .ios-scroller {
             -webkit-overflow-scrolling: touch;
-        }
-        /* Custom dynamic height for mobile Safari/Chrome address bars */
-        .h-screen-ios {
-            height: 100vh;
-            height: -webkit-fill-available;
         }
     </style>
 </head>
@@ -87,7 +94,7 @@
     </div>
 
     <!-- Main Navigation Layout -->
-    <div class="flex-1 flex flex-col overflow-hidden max-w-md mx-auto w-full relative">
+    <div class="flex-1 flex flex-col overflow-hidden max-w-md mx-auto w-full relative min-h-0">
 
         <!-- Top App Bar -->
         <header class="pt-14 pb-3 px-6 flex justify-between items-center border-b border-gray-100 bg-morning-bg/80 backdrop-blur-md sticky top-0 z-30">
@@ -98,7 +105,7 @@
         </header>
 
         <!-- Main Content Area (Tabs) -->
-        <main class="flex-1 overflow-y-auto ios-scroller px-6 pt-4 pb-24">
+        <main class="flex-1 overflow-y-auto ios-scroller px-6 pt-4 pb-24 min-h-0">
 
             <!-- TAB: TODAY'S FACT -->
             <section id="tab-today" class="tab-content flex flex-col space-y-6">
@@ -250,6 +257,14 @@
         }
         window.retryTodayFact = retryTodayFact;
 
+        function factTextSizeClass(text) {
+            const len = text.length;
+            if (len <= 90) return 'text-3xl';
+            if (len <= 160) return 'text-2xl';
+            if (len <= 260) return 'text-xl';
+            return 'text-lg';
+        }
+
         function renderTodayFact(fact) {
             const headerDate = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
             document.getElementById('header-date').innerText = headerDate;
@@ -257,7 +272,11 @@
             const isToday = fact.date === getTodayDateString();
             const factDateFormatted = new Date(fact.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
             document.getElementById('fact-date').innerText = isToday ? 'Today' : factDateFormatted;
-            document.getElementById('fact-text').innerText = fact.text;
+
+            const textEl = document.getElementById('fact-text');
+            textEl.innerText = fact.text;
+            textEl.classList.remove('text-3xl', 'text-2xl', 'text-xl', 'text-lg');
+            textEl.classList.add(factTextSizeClass(fact.text));
 
             const link = document.getElementById('fact-source-link');
             const sourceName = document.getElementById('fact-source-name');
