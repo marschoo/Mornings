@@ -29,6 +29,9 @@ jobs:
           node-version: "20"
 
       - name: Fetch today's fact
+        env:
+          NASA_API_KEY: ${{ secrets.NASA_API_KEY }}
+          SMITHSONIAN_API_KEY: ${{ secrets.SMITHSONIAN_API_KEY }}
         run: node scripts/fetch-daily-fact.mjs
 
       - name: Commit and push if changed
