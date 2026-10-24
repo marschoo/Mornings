@@ -1,0 +1,45 @@
+name: Backfill facts
+
+# Manual-only utility: fills in facts for the N days before today that don't
+# already have an entry, using the same multi-source logic as the daily
+# fetch. Never runs on a schedule.
+
+on:
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "How many days before today to backfill"
+        required: false
+        default: "30"
+
+permissions:
+  contents: write
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Backfill facts
+        env:
+          BACKFILL_DAYS: ${{ inputs.days }}
+          NASA_API_KEY: ${{ secrets.NASA_API_KEY }}
+          SMITHSONIAN_API_KEY: ${{ secrets.SMITHSONIAN_API_KEY }}
+        run: node scripts/backfill-facts.mjs
+
+      - name: Commit and push if changed
+        run: |
+          if git diff --quiet -- data/facts-history.json; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/facts-history.json
+          git commit -m "Backfill facts"
+          git push
