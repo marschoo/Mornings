@@ -208,5 +208,12 @@
     "source": "Wikipedia — Did You Know",
     "sourceUrl": "https://en.wikipedia.org/wiki/Old_Skies",
     "offline": false
+  },
+  {
+    "date": "2026-10-28",
+    "text": "Germany — Budget — revenues: $1.279 trillion (2023 est.)",
+    "source": "CIA World Factbook",
+    "sourceUrl": "https://github.com/factbook/factbook.json/blob/master/europe/gm.json",
+    "offline": false
   }
 ]
