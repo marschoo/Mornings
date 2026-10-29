@@ -215,5 +215,12 @@
     "source": "CIA World Factbook",
     "sourceUrl": "https://github.com/factbook/factbook.json/blob/master/europe/gm.json",
     "offline": false
+  },
+  {
+    "date": "2026-10-29",
+    "text": "On this day in 1999: About 10,000 people died when the most intense tropical cyclone ever recorded in the North Indian Ocean made landfall in the Indian state of Odisha near Bhubaneswar.",
+    "source": "Wikipedia — On This Day",
+    "sourceUrl": "https://en.wikipedia.org/wiki/1999_Odisha_cyclone",
+    "offline": false
   }
 ]
