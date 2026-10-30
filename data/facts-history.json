@@ -222,5 +222,12 @@
     "source": "Wikipedia — On This Day",
     "sourceUrl": "https://en.wikipedia.org/wiki/1999_Odisha_cyclone",
     "offline": false
+  },
+  {
+    "date": "2026-10-30",
+    "text": "New Zealand — Current account balance — Current account balance 2024: -$15.978 billion (2024 est.)",
+    "source": "CIA World Factbook",
+    "sourceUrl": "https://github.com/factbook/factbook.json/blob/master/australia-oceania/nz.json",
+    "offline": false
   }
 ]
