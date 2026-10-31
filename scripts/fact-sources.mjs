@@ -6,14 +6,17 @@
 // it, which would just reintroduce the same "can I trust this?" problem
 // this exists to fix.
 //
-// Weights (of 100): Wikipedia "Did You Know" 50, and 10 each for Wikipedia
-// On This Day, the CIA World Factbook, NASA's Astronomy Picture of the Day,
-// Our World in Data, and the Smithsonian Open Access API.
+// Weights (of 100): Wikipedia "Did You Know" 50, and 12.5 each for Wikipedia
+// On This Day, NASA's Astronomy Picture of the Day, Our World in Data, and
+// the Smithsonian Open Access API. (The CIA World Factbook was removed —
+// its dry administrative/statistical fields, like a country's budget
+// revenue or current account balance, read nothing like a fact even after
+// filtering; see the commit that removed it.)
 //
 // NASA and Smithsonian need a free API key (NASA_API_KEY / SMITHSONIAN_API_KEY
 // repository secrets) to work. Until configured, those two sources fail their
 // attempt and the weighted retry naturally falls through to one of the other
-// four, which need no key at all.
+// two, which need no key at all.
 
 export const RECENT_REPEAT_WINDOW = 60; // avoid repeating a fact seen in the last N entries
 export const FETCH_ATTEMPTS = 10;
@@ -139,72 +142,6 @@ async function fetchWikipediaOnThisDay(targetDate) {
     };
 }
 
-// ---- Source: CIA World Factbook (weight 10) ----
-// Note: the CIA stopped publishing the Factbook in Feb 2026, so this is now
-// a frozen archive (github.com/factbook/factbook.json) of the last published
-// data rather than a live feed. Still a real government source, just not
-// one that will stay current — fine for geography/history-flavored facts,
-// less so for anything framed as "currently." Not date-dependent at all.
-const FACTBOOK_COUNTRIES = [
-    ["north-america", "us"], ["north-america", "ca"], ["north-america", "mx"],
-    ["europe", "gm"], ["europe", "fr"], ["europe", "uk"], ["europe", "it"], ["europe", "sp"],
-    ["europe", "po"], ["europe", "ne"], ["europe", "sw"], ["europe", "da"], ["europe", "no"],
-    ["east-n-southeast-asia", "ja"], ["east-n-southeast-asia", "ch"], ["east-n-southeast-asia", "ks"],
-    ["east-n-southeast-asia", "th"], ["east-n-southeast-asia", "vm"], ["east-n-southeast-asia", "rp"],
-    ["south-asia", "in"], ["south-asia", "pk"],
-    ["australia-oceania", "as"], ["australia-oceania", "nz"],
-    ["south-america", "br"], ["south-america", "ar"], ["south-america", "ci"], ["south-america", "co"],
-    ["africa", "eg"], ["africa", "sf"], ["africa", "ni"], ["africa", "ke"], ["africa", "mo"],
-    ["middle-east", "is"], ["middle-east", "sa"], ["middle-east", "tu"], ["middle-east", "ir"]
-];
-const FACTBOOK_CATEGORIES = ["Introduction", "Geography", "People and Society", "Government", "Economy"];
-// Filters out dry administrative/tabular fields (diplomatic addresses, trade
-// figures, budget line items) that are accurate but read nothing like a fact.
-const FACTBOOK_LABEL_BLOCKLIST = [
-    "Diplomatic representation", "Imports", "Exports", "budget", "chancery", "consulate",
-    "Fiscal year", "Currency", "Exchange rates", "GDP", "Debt", "Inflation", "Unemployment",
-    "Labor force", "Industrial production", "Public debt", "Taxes", "Stock of"
-];
-
-function collectTextLeaves(node, labels = []) {
-    const results = [];
-    if (node == null || typeof node !== "object") return results;
-    if (typeof node.text === "string" && node.text.trim().length > 0) {
-        results.push({ label: labels.map(l => l.trim()).join(" — "), text: node.text });
-    }
-    for (const [key, value] of Object.entries(node)) {
-        if (key === "text") continue;
-        if (value && typeof value === "object") {
-            results.push(...collectTextLeaves(value, [...labels, key]));
-        }
-    }
-    return results;
-}
-
-async function fetchCIAFactbook() {
-    const [region, code] = pick(FACTBOOK_COUNTRIES);
-    const url = `https://raw.githubusercontent.com/factbook/factbook.json/master/${region}/${code}.json`;
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`CIA Factbook returned ${response.status} for ${region}/${code}`);
-    const country = await response.json();
-
-    const category = pick(FACTBOOK_CATEGORIES);
-    const leaves = collectTextLeaves(country[category])
-        .map(leaf => ({ ...leaf, text: stripHtml(leaf.text) }))
-        .filter(leaf => leaf.text.length >= 25) // no upper bound — truncateToSentences() handles long entries below
-        .filter(leaf => !FACTBOOK_LABEL_BLOCKLIST.some(term => leaf.label.includes(term)));
-    if (leaves.length === 0) throw new Error(`CIA Factbook: no usable text in ${category} for ${region}/${code}`);
-
-    const leaf = pick(leaves);
-    const countryName = country?.Government?.["Country name"]?.["conventional short form"]?.text || code.toUpperCase();
-
-    return {
-        text: truncateToSentences(`${countryName} — ${leaf.label}: ${leaf.text}`, 400),
-        source: "CIA World Factbook",
-        sourceUrl: url.replace("raw.githubusercontent.com", "github.com").replace("/master/", "/blob/master/")
-    };
-}
-
 // ---- Source: NASA Astronomy Picture of the Day (weight 10) ----
 // Genuinely date-accurate: NASA's API accepts a `date` param for any past day.
 async function fetchNASA(targetDate) {
@@ -306,11 +243,10 @@ async function fetchSmithsonian() {
 function buildSources(targetDate) {
     return [
         { name: "wikipedia_dyk", weight: 50, fetchFn: () => fetchWikipediaDYK() },
-        { name: "wikipedia_onthisday", weight: 10, fetchFn: () => fetchWikipediaOnThisDay(targetDate) },
-        { name: "cia_factbook", weight: 10, fetchFn: () => fetchCIAFactbook() },
-        { name: "nasa_apod", weight: 10, fetchFn: () => fetchNASA(targetDate) },
-        { name: "our_world_in_data", weight: 10, fetchFn: () => fetchOWID() },
-        { name: "smithsonian", weight: 10, fetchFn: () => fetchSmithsonian() }
+        { name: "wikipedia_onthisday", weight: 12.5, fetchFn: () => fetchWikipediaOnThisDay(targetDate) },
+        { name: "nasa_apod", weight: 12.5, fetchFn: () => fetchNASA(targetDate) },
+        { name: "our_world_in_data", weight: 12.5, fetchFn: () => fetchOWID() },
+        { name: "smithsonian", weight: 12.5, fetchFn: () => fetchSmithsonian() }
     ];
 }
 

@@ -1,0 +1,41 @@
+name: Migrate facts
+
+# One-off utility: removes any CIA World Factbook entries and regenerates
+# those dates with the current source pool, and retroactively cleans up
+# text artifacts (DYK "..." prefix, undecoded &#160;, stray space before
+# punctuation) on every remaining entry. Never runs on a schedule — meant
+# to be run once after a source-pool or text-cleanup change, not repeatedly.
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Migrate facts
+        env:
+          NASA_API_KEY: ${{ secrets.NASA_API_KEY }}
+          SMITHSONIAN_API_KEY: ${{ secrets.SMITHSONIAN_API_KEY }}
+        run: node scripts/migrate-facts.mjs
+
+      - name: Commit and push if changed
+        run: |
+          if git diff --quiet -- data/facts-history.json; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/facts-history.json
+          git commit -m "Migrate facts: remove CIA entries, clean up text artifacts"
+          git push
