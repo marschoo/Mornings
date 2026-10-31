@@ -53,13 +53,14 @@ function pick(arr) {
 function stripHtml(html) {
     return html
         .replace(/<[^>]+>/g, " ")
-        .replace(/&nbsp;/g, " ")
+        .replace(/&nbsp;|&#160;/g, " ")
         .replace(/&amp;/g, "&")
         .replace(/&lt;/g, "<")
         .replace(/&gt;/g, ">")
         .replace(/&quot;/g, '"')
         .replace(/&#39;/g, "'")
         .replace(/\s+/g, " ")
+        .replace(/\s+([.,;:!?])/g, "$1") // a stripped tag can leave a stray space before punctuation
         .trim();
 }
 
