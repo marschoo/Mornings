@@ -102,9 +102,14 @@ async function fetchWikipediaDYK() {
 
     const chosen = pick(hooks);
     const linkMatch = chosen.html.match(/<a[^>]+href="(\/wiki\/[^"#]+)"/);
+    // Wikipedia displays these hooks under a "Did you know..." heading, with
+    // the lead-in implied and only "... that X?" shown. Out of that context
+    // (e.g. here, as a standalone fact) the leading "..." reads as truncated
+    // or cut off rather than as a stylistic convention, so spell it out.
+    const text = chosen.text.replace(/^\.\.\.\s*/, "Did you know ");
 
     return {
-        text: /[.!?]$/.test(chosen.text) ? chosen.text : `${chosen.text}.`,
+        text: /[.!?]$/.test(text) ? text : `${text}.`,
         source: "Wikipedia — Did You Know",
         sourceUrl: linkMatch ? `https://en.wikipedia.org${linkMatch[1]}` : "https://en.wikipedia.org/wiki/Main_Page"
     };
