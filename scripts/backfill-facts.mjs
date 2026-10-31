@@ -6,11 +6,10 @@
 //
 // Date accuracy varies by source: NASA (real historical `date` param) and
 // Wikipedia On This Day (keyed by month/day, so correct regardless of year)
-// are genuinely accurate for the day they're filed under. Wikipedia DYK, the
-// CIA Factbook, Our World in Data, and Smithsonian are evergreen — picking
-// one for a past day doesn't mean that's what the source actually showed on
-// that date, just that the fact itself is real and still attributed to its
-// real source.
+// are genuinely accurate for the day they're filed under. Wikipedia DYK, Our
+// World in Data, and Smithsonian are evergreen — picking one for a past day
+// doesn't mean that's what the source actually showed on that date, just
+// that the fact itself is real and still attributed to its real source.
 
 import { readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
