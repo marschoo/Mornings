@@ -110,32 +110,31 @@
             <!-- TAB: TODAY'S FACT -->
             <section id="tab-today" class="tab-content flex flex-col space-y-6">
 
-                <!-- Hero Fact Card -->
-                <div class="bg-morning-card border border-neutral-100 rounded-3xl p-6 shadow-[0_4px_24px_rgba(44,37,35,0.03)] flex flex-col min-h-[320px] justify-between relative overflow-hidden transition-all duration-300">
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center">
-                            <span id="fact-category" class="bg-morning-accentLight text-morning-accent text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
-                                Curious Fact
-                            </span>
-                            <span id="fact-date" class="text-xs text-morning-muted font-medium">
-                                Today
-                            </span>
-                        </div>
+                <!-- Hero Fact Card — fixed max height regardless of fact length;
+                     only the text in the middle scrolls, header/footer always visible -->
+                <div class="bg-morning-card border border-neutral-100 rounded-3xl p-6 shadow-[0_4px_24px_rgba(44,37,35,0.03)] flex flex-col min-h-[320px] max-h-[65vh] relative overflow-hidden transition-all duration-300">
+                    <div class="flex justify-between items-center shrink-0">
+                        <span id="fact-category" class="bg-morning-accentLight text-morning-accent text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
+                            Curious Fact
+                        </span>
+                        <span id="fact-date" class="text-xs text-morning-muted font-medium">
+                            Today
+                        </span>
+                    </div>
 
-                        <!-- Large Beautiful Serif Text -->
-                        <div class="py-4">
-                            <i data-lucide="quote" class="w-8 h-8 text-morning-accent/10 mb-2"></i>
-                            <p id="fact-text" class="font-serif text-3xl leading-relaxed text-morning-text italic pr-2">
-                                Finding today's fact...
-                            </p>
-                            <a id="fact-source-link" href="#" target="_blank" rel="noopener noreferrer" class="hidden mt-3 inline-flex items-center gap-1 text-[11px] text-morning-muted hover:text-morning-accent underline underline-offset-2">
-                                Source <span id="fact-source-name"></span>
-                            </a>
-                        </div>
+                    <!-- Large Beautiful Serif Text — scrolls internally if it's long -->
+                    <div class="flex-1 min-h-0 overflow-y-auto ios-scroller py-4 pr-1">
+                        <i data-lucide="quote" class="w-8 h-8 text-morning-accent/10 mb-2"></i>
+                        <p id="fact-text" class="font-serif text-3xl leading-relaxed text-morning-text italic">
+                            Finding today's fact...
+                        </p>
+                        <a id="fact-source-link" href="#" target="_blank" rel="noopener noreferrer" class="hidden mt-3 inline-flex items-center gap-1 text-[11px] text-morning-muted hover:text-morning-accent underline underline-offset-2">
+                            Source <span id="fact-source-name"></span>
+                        </a>
                     </div>
 
                     <!-- Bottom Controls inside Hero Card -->
-                    <div class="pt-6 border-t border-neutral-100 flex items-center justify-end">
+                    <div class="pt-6 border-t border-neutral-100 flex items-center justify-end shrink-0">
                         <button onclick="shareTodayFact()" class="p-2.5 rounded-full hover:bg-neutral-50 active:scale-95 transition-all text-morning-muted">
                             <i data-lucide="share" class="w-5 h-5"></i>
                         </button>
