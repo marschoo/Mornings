@@ -229,5 +229,12 @@
     "source": "CIA World Factbook",
     "sourceUrl": "https://github.com/factbook/factbook.json/blob/master/australia-oceania/nz.json",
     "offline": false
+  },
+  {
+    "date": "2026-10-31",
+    "text": "... that some believe that the \"High German doctor\" mentioned in The Legend of Sleepy Hollow was inspired by a legendary witch said to have been killed in the American Revolutionary War ?",
+    "source": "Wikipedia — Did You Know",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Hulda_of_Bohemia",
+    "offline": false
   }
 ]
