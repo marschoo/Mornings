@@ -93,7 +93,7 @@ function normalizeImageUrl(html) {
 // No historical archive is exposed via this method — it always reflects
 // whichever hooks are live right now, regardless of any target date passed
 // in elsewhere in this module.
-async function fetchWikipediaDYK() {
+async function fetchDykHooks() {
     const response = await fetch(
         "https://en.wikipedia.org/w/api.php?action=parse&page=Template:Did_you_know&format=json&formatversion=2&prop=text"
     );
@@ -111,27 +111,44 @@ async function fetchWikipediaDYK() {
         .map(html => ({ html, text: stripHtml(html) }))
         .filter(item => item.text.startsWith("...") && item.text.length >= 25);
     if (hooks.length === 0) throw new Error("Wikipedia DYK: no '...'-prefixed hooks found in template");
+    return hooks;
+}
 
-    const chosen = pick(hooks);
-    const linkMatch = chosen.html.match(/<a[^>]+href="(\/wiki\/[^"#]+)"/);
+function dykHookToFactText(hook) {
     // Wikipedia displays these hooks under a "Did you know..." heading, with
     // the lead-in implied and only "... that X?" shown. Out of that context
     // (e.g. here, as a standalone fact) the leading "..." reads as truncated
     // or cut off rather than as a stylistic convention, so spell it out.
-    const text = chosen.text.replace(/^\.\.\.\s*/, "Did you know ");
+    const text = hook.text.replace(/^\.\.\.\s*/, "Did you know ");
+    return /[.!?]$/.test(text) ? text : `${text}.`;
+}
+
+async function fetchWikipediaDYK() {
+    const hooks = await fetchDykHooks();
+    const chosen = pick(hooks);
+    const linkMatch = chosen.html.match(/<a[^>]+href="(\/wiki\/[^"#]+)"/);
 
     return {
-        text: /[.!?]$/.test(text) ? text : `${text}.`,
+        text: dykHookToFactText(chosen),
         source: "Wikipedia — Did You Know",
         sourceUrl: linkMatch ? `https://en.wikipedia.org${linkMatch[1]}` : "https://en.wikipedia.org/wiki/Main_Page",
         imageUrl: normalizeImageUrl(chosen.html)
     };
 }
 
+// DYK exposes no historical archive — this only finds an image for a
+// previously-saved DYK fact if, by chance, its hook happens to still be
+// live in the template right now. No match is the expected common case.
+export async function findDykImageIfStillLive(savedText) {
+    const hooks = await fetchDykHooks();
+    const match = hooks.find(hook => dykHookToFactText(hook) === savedText);
+    return match ? normalizeImageUrl(match.html) : null;
+}
+
 // ---- Source: Wikipedia On This Day (weight 10) ----
 // Keyed off month/day only, so it's genuinely accurate for any target date
 // passed in (the events repeat the same every year on that month/day).
-async function fetchWikipediaOnThisDay(targetDate) {
+async function fetchOnThisDayEvents(targetDate) {
     const mm = String(targetDate.getUTCMonth() + 1).padStart(2, "0");
     const dd = String(targetDate.getUTCDate()).padStart(2, "0");
     const response = await fetch(`https://api.wikimedia.org/feed/v1/wikipedia/en/onthisday/selected/${mm}/${dd}`);
@@ -139,7 +156,11 @@ async function fetchWikipediaOnThisDay(targetDate) {
     const data = await response.json();
     const events = data?.selected;
     if (!Array.isArray(events) || events.length === 0) throw new Error("Wikipedia On This Day: no events array");
+    return events;
+}
 
+async function fetchWikipediaOnThisDay(targetDate) {
+    const events = await fetchOnThisDayEvents(targetDate);
     const event = pick(events);
     if (!event?.text || !event?.year) throw new Error("Wikipedia On This Day: event missing text/year");
     const page = event.pages?.[0];
@@ -150,6 +171,14 @@ async function fetchWikipediaOnThisDay(targetDate) {
         sourceUrl: page?.content_urls?.desktop?.page || "https://en.wikipedia.org/wiki/Main_Page",
         imageUrl: page?.thumbnail?.source || null
     };
+}
+
+// Month/day is keyed and stable, so (unlike DYK) this reliably finds the
+// exact same event — and its image, if it has one — for a past date.
+export async function findOnThisDayImage(targetDate, savedText) {
+    const events = await fetchOnThisDayEvents(targetDate);
+    const match = events.find(event => event?.text && event?.year && `On this day in ${event.year}: ${stripHtml(event.text)}` === savedText);
+    return match?.pages?.[0]?.thumbnail?.source || null;
 }
 
 // ---- Source: NASA Astronomy Picture of the Day (weight 10) ----
@@ -176,6 +205,13 @@ async function fetchNASA(targetDate) {
         // when media_type confirms it actually is one.
         imageUrl: data.media_type === "image" ? (data.url || null) : null
     };
+}
+
+// NASA's `date` param makes this deterministic — a given date always
+// returns the same single APOD entry, so no text-matching is needed.
+export async function findNasaImage(targetDate) {
+    const fact = await fetchNASA(targetDate);
+    return fact.imageUrl || null;
 }
 
 // ---- Source: Our World in Data (weight 10) ----
