@@ -63,7 +63,7 @@ async function main() {
             failedDays.push(dateStr);
             continue; // leave this day empty rather than fill it with an unrelated offline fallback
         }
-        history.push({ date: dateStr, text: fact.text, source: fact.source, sourceUrl: fact.sourceUrl, offline: fact.offline });
+        history.push({ date: dateStr, text: fact.text, source: fact.source, sourceUrl: fact.sourceUrl, imageUrl: fact.imageUrl || null, offline: fact.offline });
         console.log(`Replaced ${dateStr} with a ${fact.source} fact.`);
     }
 

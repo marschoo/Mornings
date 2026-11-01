@@ -78,6 +78,14 @@ function truncateToSentences(text, maxChars) {
     return out.length > 0 ? out : text.slice(0, maxChars).trim();
 }
 
+// MediaWiki thumbnail <img> URLs are commonly protocol-relative ("//upload...").
+function normalizeImageUrl(html) {
+    const match = html.match(/<img[^>]+src="([^"]+)"/);
+    if (!match) return null;
+    const src = match[1];
+    return src.startsWith("//") ? `https:${src}` : src;
+}
+
 // ---- Source: Wikipedia "Did You Know" (weight 50) ----
 // Pulled straight from the Did You Know template transcluded on the Main
 // Page — each hook there has already gone through Wikipedia's DYK review
@@ -115,7 +123,8 @@ async function fetchWikipediaDYK() {
     return {
         text: /[.!?]$/.test(text) ? text : `${text}.`,
         source: "Wikipedia — Did You Know",
-        sourceUrl: linkMatch ? `https://en.wikipedia.org${linkMatch[1]}` : "https://en.wikipedia.org/wiki/Main_Page"
+        sourceUrl: linkMatch ? `https://en.wikipedia.org${linkMatch[1]}` : "https://en.wikipedia.org/wiki/Main_Page",
+        imageUrl: normalizeImageUrl(chosen.html)
     };
 }
 
@@ -138,7 +147,8 @@ async function fetchWikipediaOnThisDay(targetDate) {
     return {
         text: `On this day in ${event.year}: ${stripHtml(event.text)}`,
         source: "Wikipedia — On This Day",
-        sourceUrl: page?.content_urls?.desktop?.page || "https://en.wikipedia.org/wiki/Main_Page"
+        sourceUrl: page?.content_urls?.desktop?.page || "https://en.wikipedia.org/wiki/Main_Page",
+        imageUrl: page?.thumbnail?.source || null
     };
 }
 
@@ -161,7 +171,10 @@ async function fetchNASA(targetDate) {
     return {
         text: truncateToSentences(stripHtml(data.explanation), 350),
         source: `NASA — ${data.title || "Astronomy Picture of the Day"}`,
-        sourceUrl: permalink
+        sourceUrl: permalink,
+        // APOD is sometimes a video, not a photo — only use url as an image
+        // when media_type confirms it actually is one.
+        imageUrl: data.media_type === "image" ? (data.url || null) : null
     };
 }
 
@@ -271,7 +284,7 @@ export async function fetchFreshFact(history, targetDate = new Date()) {
         try {
             const fact = await source.fetchFn();
             if (!fact?.text) continue;
-            lastGood = { text: fact.text, source: fact.source, sourceUrl: fact.sourceUrl, offline: false };
+            lastGood = { text: fact.text, source: fact.source, sourceUrl: fact.sourceUrl, imageUrl: fact.imageUrl || null, offline: false };
             if (!isRecentlySeen(fact.text, history)) return lastGood;
         } catch (err) {
             failures.push(`${source.name}: ${err.message || err}`);
@@ -285,5 +298,5 @@ export function pickFallbackFact(history) {
     const unseen = FALLBACK_FACTS.filter(text => !isRecentlySeen(text, history));
     const pool = unseen.length > 0 ? unseen : FALLBACK_FACTS;
     const text = pool[Math.floor(Math.random() * pool.length)];
-    return { text, source: "Mornings offline backup", sourceUrl: null, offline: true };
+    return { text, source: "Mornings offline backup", sourceUrl: null, imageUrl: null, offline: true };
 }

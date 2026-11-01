@@ -47,7 +47,7 @@ async function main() {
         fact = pickFallbackFact(history);
     }
 
-    history.push({ date: todayStr, text: fact.text, source: fact.source, sourceUrl: fact.sourceUrl, offline: fact.offline });
+    history.push({ date: todayStr, text: fact.text, source: fact.source, sourceUrl: fact.sourceUrl, imageUrl: fact.imageUrl || null, offline: fact.offline });
     const trimmed = history.slice(-HISTORY_LIMIT);
 
     await writeFile(DATA_PATH, JSON.stringify(trimmed, null, 2) + "\n", "utf8");

@@ -67,7 +67,7 @@ async function main() {
                       // better to leave a day missing than claim a canned fact is from that day
         }
 
-        history.push({ date: dateStr, text: fact.text, source: fact.source, sourceUrl: fact.sourceUrl, offline: fact.offline });
+        history.push({ date: dateStr, text: fact.text, source: fact.source, sourceUrl: fact.sourceUrl, imageUrl: fact.imageUrl || null, offline: fact.offline });
         added++;
         console.log(`Added fact for ${dateStr} from ${fact.source}.`);
     }
