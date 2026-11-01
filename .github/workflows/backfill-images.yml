@@ -1,0 +1,43 @@
+name: Backfill images
+
+# Manual-only utility: retroactively finds an image for the most recent N
+# Library entries that don't already have one. Never runs on a schedule.
+
+on:
+  workflow_dispatch:
+    inputs:
+      count:
+        description: "How many of the most recent imageless entries to check"
+        required: false
+        default: "15"
+
+permissions:
+  contents: write
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Backfill images
+        env:
+          BACKFILL_IMAGES_COUNT: ${{ inputs.count }}
+          NASA_API_KEY: ${{ secrets.NASA_API_KEY }}
+        run: node scripts/backfill-images.mjs
+
+      - name: Commit and push if changed
+        run: |
+          if git diff --quiet -- data/facts-history.json; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/facts-history.json
+          git commit -m "Backfill images"
+          git push
