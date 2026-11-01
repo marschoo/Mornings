@@ -124,6 +124,7 @@
 
                     <!-- Large Beautiful Serif Text — scrolls internally if it's long -->
                     <div class="flex-1 min-h-0 overflow-y-auto ios-scroller py-4 pr-1">
+                        <img id="fact-image" src="" alt="" loading="lazy" class="hidden w-full max-h-48 object-cover rounded-xl mb-3">
                         <i data-lucide="quote" class="w-8 h-8 text-morning-accent/10 mb-2"></i>
                         <p id="fact-text" class="font-serif text-3xl leading-relaxed text-morning-text italic">
                             Finding today's fact...
@@ -272,6 +273,17 @@
             const factDateFormatted = new Date(fact.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
             document.getElementById('fact-date').innerText = isToday ? 'Today' : factDateFormatted;
 
+            const imageEl = document.getElementById('fact-image');
+            if (fact.imageUrl) {
+                imageEl.onerror = () => imageEl.classList.add('hidden');
+                imageEl.alt = fact.text;
+                imageEl.classList.remove('hidden');
+                imageEl.src = fact.imageUrl;
+            } else {
+                imageEl.classList.add('hidden');
+                imageEl.removeAttribute('src');
+            }
+
             const textEl = document.getElementById('fact-text');
             textEl.innerText = fact.text;
             textEl.classList.remove('text-3xl', 'text-2xl', 'text-xl', 'text-lg');
@@ -315,6 +327,7 @@
                         <span>${isToday ? 'Today' : formattedDate}</span>
                         ${entry.offline ? '<span class="text-amber-600">Offline</span>' : ''}
                     </div>
+                    <img class="history-image hidden w-full max-h-40 object-cover rounded-xl" alt="" loading="lazy">
                     <p class="font-serif text-lg leading-relaxed italic text-morning-text">"${entry.text}"</p>
                     <div class="flex justify-end gap-2 pt-2 border-t border-neutral-50">
                         <button data-share-text="${entry.text.replace(/"/g, '&quot;')}" class="share-history-btn text-[10px] uppercase font-bold text-morning-accent tracking-wider flex items-center gap-1 hover:underline">
@@ -322,6 +335,13 @@
                         </button>
                     </div>
                 `;
+                if (entry.imageUrl) {
+                    const img = item.querySelector('.history-image');
+                    img.onerror = () => img.classList.add('hidden');
+                    img.alt = entry.text;
+                    img.classList.remove('hidden');
+                    img.src = entry.imageUrl;
+                }
                 container.appendChild(item);
             });
 
