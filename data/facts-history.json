@@ -344,5 +344,13 @@
     "sourceUrl": "https://en.wikipedia.org/wiki/Flag_of_Tuvalu",
     "imageUrl": null,
     "offline": false
+  },
+  {
+    "date": "2026-11-15",
+    "text": "On this day in 1988: The Soviet spacecraft Buran (pictured), a reusable vehicle built in response to NASA's Space Shuttle program, was launched, uncrewed, on its only flight.",
+    "source": "Wikipedia — On This Day",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Buran_(spacecraft)",
+    "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/68/Buran_on_An-225_%28Le_Bourget_1989%29_1.JPEG/330px-Buran_on_An-225_%28Le_Bourget_1989%29_1.JPEG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "offline": false
   }
 ]
