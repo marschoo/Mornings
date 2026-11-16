@@ -352,5 +352,13 @@
     "sourceUrl": "https://en.wikipedia.org/wiki/Buran_(spacecraft)",
     "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/68/Buran_on_An-225_%28Le_Bourget_1989%29_1.JPEG/330px-Buran_on_An-225_%28Le_Bourget_1989%29_1.JPEG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
     "offline": false
+  },
+  {
+    "date": "2026-11-16",
+    "text": "Did you know that Agatha Christie was a major inspiration for Grace Bruxner 's Frog Detective?",
+    "source": "Wikipedia — Did You Know",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Agatha_Christie",
+    "imageUrl": null,
+    "offline": false
   }
 ]
