@@ -360,5 +360,13 @@
     "sourceUrl": "https://en.wikipedia.org/wiki/Agatha_Christie",
     "imageUrl": null,
     "offline": false
+  },
+  {
+    "date": "2026-11-17",
+    "text": "On this day in 1941: World War II: Hjalmar Siilasvuo ordered Finnish forces to halt their assault against Soviet forces near Salla, concluding Operation Arctic Fox.",
+    "source": "Wikipedia — On This Day",
+    "sourceUrl": "https://en.wikipedia.org/wiki/World_War_II",
+    "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/Bundesarchiv_Bild_101I-646-5188-17%2C_Flugzeuge_Junkers_Ju_87.jpg/330px-Bundesarchiv_Bild_101I-646-5188-17%2C_Flugzeuge_Junkers_Ju_87.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "offline": false
   }
 ]
