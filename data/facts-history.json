@@ -368,5 +368,13 @@
     "sourceUrl": "https://en.wikipedia.org/wiki/World_War_II",
     "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/Bundesarchiv_Bild_101I-646-5188-17%2C_Flugzeuge_Junkers_Ju_87.jpg/330px-Bundesarchiv_Bild_101I-646-5188-17%2C_Flugzeuge_Junkers_Ju_87.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
     "offline": false
+  },
+  {
+    "date": "2026-11-18",
+    "text": "Did you know that Kathryn Krick went from driving for Lyft to being described as the \"TikTok apostle of Los Angeles\"?",
+    "source": "Wikipedia — Did You Know",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Kathryn_Krick",
+    "imageUrl": null,
+    "offline": false
   }
 ]
