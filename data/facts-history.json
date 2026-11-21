@@ -392,5 +392,13 @@
     "sourceUrl": "https://en.wikipedia.org/wiki/Jo_Myong_Ae",
     "imageUrl": null,
     "offline": false
+  },
+  {
+    "date": "2026-11-21",
+    "text": "On this day in 2012: A remote-controlled bomb exploded on a bus in Tel Aviv, Israel, injuring at least 28 people on board.",
+    "source": "Wikipedia — On This Day",
+    "sourceUrl": "https://en.wikipedia.org/wiki/2012_Tel_Aviv_bus_bombing",
+    "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6b/Tel_Aviv_bus_bombing%2C_November_2012.jpg/330px-Tel_Aviv_bus_bombing%2C_November_2012.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "offline": false
   }
 ]
