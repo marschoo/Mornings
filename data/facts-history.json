@@ -416,5 +416,13 @@
     "sourceUrl": "https://en.wikipedia.org/wiki/DJ_Lottie",
     "imageUrl": null,
     "offline": false
+  },
+  {
+    "date": "2026-11-24",
+    "text": "As of 2025, global CO2 emissions per person stands at 4.7.",
+    "source": "Our World in Data",
+    "sourceUrl": "https://ourworldindata.org/grapher/co2-emissions-per-capita",
+    "imageUrl": null,
+    "offline": false
   }
 ]
