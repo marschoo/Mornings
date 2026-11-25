@@ -424,5 +424,13 @@
     "sourceUrl": "https://ourworldindata.org/grapher/co2-emissions-per-capita",
     "imageUrl": null,
     "offline": false
+  },
+  {
+    "date": "2026-11-25",
+    "text": "Did you know that actor Pierce Wallace was inducted into ESPN 's Fan Hall of Fame for attending college football games dressed as the Joker?",
+    "source": "Wikipedia — Did You Know",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Pierce_Wallace",
+    "imageUrl": null,
+    "offline": false
   }
 ]
