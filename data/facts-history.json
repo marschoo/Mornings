@@ -432,5 +432,13 @@
     "sourceUrl": "https://en.wikipedia.org/wiki/Pierce_Wallace",
     "imageUrl": null,
     "offline": false
+  },
+  {
+    "date": "2026-11-26",
+    "text": "Did you know that the Goldhaber experiment showed that neutrinos are left-handed without detecting a single one?",
+    "source": "Wikipedia — Did You Know",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Goldhaber_experiment",
+    "imageUrl": null,
+    "offline": false
   }
 ]
